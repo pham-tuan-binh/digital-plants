@@ -442,28 +442,44 @@ export const FLORA: Flora[] = [
     latin: "Oryza sativa",
     english: "rice",
     note: "Rice. A field ready to cut leans all one way, because every stem is carrying the same weight.",
-    structure: "The stem is a grass production with a larger turn, so it arches instead of standing. The panicle opens in a single pass, F[+K][-K][++K][--K]K, which matters: if it needed a second pass a late roll would leave the grain unwritten and the plant would come up bare.",
+    structure: "The culm is one production, A → F−A, repeated: a step and a small turn, which over eighteen of them bends a straight stalk into an arch. The head opens in a single pass, because a production that needed a second one could be rolled on the last pass and leave the grain unwritten. Its arms leave the culm at successive nodes rather than all at one, which matters more than it sounds: five arms off a single point lay five first strokes on top of each other and read as a knot of ink. Each arm sheds grain along its whole length and bends further over as it goes. There are two chains of them, P and X, identical but for the direction of the turn, because an arm has to curve the way it set out; turn them all the same way and the fan folds shut into a sheaf.",
     axiom: "A",
     rules: [
       "A -> 0.8 : F-A",
-      // The head is a broom: five arms off one node, each bending further
-      // over as it goes and shedding grain the whole way down.
-      "A -> 0.2 : F[++P][+P][P][-P][--P]",
-      "P -> F-[+K][-K]Q",
-      "Q -> F--[+K][-K]R",
-      "R -> F--[+K]K",
+      // The head is a broom, and its arms leave the culm at successive nodes
+      // rather than all at one. Five arms off a single point pile five first
+      // strokes on top of each other and read as a knot of ink, which is the
+      // difference between a panicle and a posy.
+      "A -> 0.2 : F[+++++++X]F[+++++X]F[+++X]F[+X]F[-P]F[---P]F[-----P]F[-------P]FP",
+      // Each arm bends further over as it goes and sheds grain the whole way
+      // down, which is what makes a ripe head hang. There are two chains of
+      // them because an arm has to curve the way it set out: turn every arm
+      // the same way and the fan folds shut into a single sheaf.
+      "P -> F--KF--KF--KQ",
+      "Q -> F---KF---KR",
+      "R -> F---KF--K",
+      "X -> F++KF++KF++KY",
+      "Y -> F+++KF+++KZ",
+      "Z -> F+++KF++K",
     ].join("\n"),
     steps: 18,
     seed: 17,
     turtle: {
       angle: 4.4,
       jitter: 3,
-      flowerSize: 0.5,
+      // An arm of the head is not the culm, and should not be drawn at the
+      // weight of one.
+      taper: 0.55,
+      // A grain, not a bloom: one small mark rather than a rosette of four,
+      // and there are five dozen of them down the arms.
+      flowerSize: 0.66,
     },
-    flower: { outer: "#d9bd6a", heart: null },
-    petals: 4,
+    flower: { outer: "#c19a3c", heart: null },
+    petals: 2,
     scale: 0.82,
-    minDraw: 12,
+    // Enough passes must remain after the head opens for its arms to run out
+    // to their last node, or the panicle is a stub.
+    minDraw: 90,
   },
 ];
 
