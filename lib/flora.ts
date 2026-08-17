@@ -50,39 +50,36 @@ export const FLORA: Flora[] = [
     latin: "Ochna integerrima",
     english: "yellow apricot",
     note: "The Tết tree of the south. It sheds its leaves in the weeks before the new year and then flowers on bare wood, so the whole crown turns yellow at once instead of a little at a time.",
-    structure: "Every one of the five ways a limb can divide puts both arms inside brackets. That is the whole reason this reads as a tree: the turtle shortens its step on entering a branch, so wood that stays outside the brackets never shortens and draws a pole the height of the drawing. The five differ in their angles and in how much wood they spend before dividing again, which is what keeps one half of the crown from mirroring the other. A limb that turns to twig, B, stays twig, and every twig production sets flower, so blossom runs along the wood rather than sitting at the ends of it.",
-    axiom: "FFA",
+    structure: "A limb here is built the way a fern frond is: one axis, A, that keeps going and throws a shoot to either side at every node, where each shoot B is the same figure one size down and the smallest of them, C, carries the blossom. Nothing in the rules grades the shoots by length. A shoot near the base of a limb has had every pass to develop and one near the tip has had a single pass, so the limb runs from long to short along its own length on its own, which is what gives both a frond and a flowering branch their shape. The turn sits on the second of the two leader productions rather than on both, because turning at every node curls a limb into a circle instead of bending it.",
+    axiom: "FFFFT",
     rules: [
-      // Both arms of every fork are bracketed. The step shrinks on entering a
-      // branch, so a limb that stays outside the brackets keeps its full
-      // length and draws a pole the height of the tree; bracketing both arms
-      // is what makes the wood get shorter and thinner as it divides.
-      // The four forks differ in angle and in how much wood they spend
-      // before dividing again, which keeps the crown from mirroring itself.
-      "A -> 0.26 : FF[+FA][-FFA]",
-      "A -> 0.20 : FF[++FA][-FA]",
-      "A -> 0.14 : F[+FFA][--FA]",
-      "A -> 0.22 : FF[++FB][-FA]",
-      "A -> 0.18 : F[-FB][+FB]",
-      // Once a limb turns to twig it stays twig, and every twig production
-      // sets flower. Apricot opens on bare wood and close in, so blossom
-      // runs along a twig rather than only at its tip, and the crown goes
-      // yellow all at once instead of a little at a time.
-      "B -> 0.38 : F[+K][-K]FB",
-      "B -> 0.34 : F[+KB][-K]",
-      "B -> 0.28 : F[+K][-K]K",
+      // The trunk hands its growth to four limbs and a leader, spread wide.
+      "T -> FF[++++A]F[----D]FF[++B]F[--B]FA",
+      // A limb is a frond: one axis that keeps going, throwing a shoot to
+      // either side at every node and arcing over as it lengthens. D is the
+      // same limb arcing the other way, so the two sides of the tree lean
+      // apart instead of together.
+      "A -> F[+B]F[-B]F-E",
+      "E -> F[+B]F[-B]FA",
+      "D -> F[+B]F[-B]F+G",
+      "G -> F[+B]F[-B]FD",
+      // A shoot is the same figure one size down, and the smallest of them
+      // carries the blossom. Nothing grades these by hand: a shoot at the
+      // base of a limb has had every pass to develop and one at the tip has
+      // had a single pass, so the limb runs from long to short along its
+      // own length, which is what a frond does and what a flowering branch
+      // does too.
+      "B -> F[+C]F[-C]FC",
+      "C -> F[+K][-K]FK",
     ].join("\n"),
     steps: 9,
-    seed: 14,
+    seed: 9,
     turtle: {
-      angle: 26,
-      taper: 0.76,
-      jitter: 14,
-      tropism: 0.5,
-      // A flower is drawn at this multiple of the step it stands on, and the
-      // step has tapered to a twentieth of the trunk's by the time it gets
-      // there, so the number has to be large for the blossom to read at all.
-      flowerSize: 2.4,
+      angle: 15,
+      taper: 0.72,
+      jitter: 10,
+      tropism: 0,
+      flowerSize: 0.95,
     },
     flower: { outer: "#e0b23f", heart: "#a9762a" },
     petals: 5,
@@ -97,29 +94,28 @@ export const FLORA: Flora[] = [
     latin: "Prunus persica",
     english: "peach blossom",
     note: "The Tết tree of the north, where the wood needs a real winter before it will set flower. The pink is deeper the colder the season was.",
-    structure: "The same five forks as the apricot, weighted the other way and given an extra generation to run. Peach spends more wood between one division and the next, and it holds a narrower angle, so its limbs reach further before they split. Nothing else separates the two trees: the same eight productions, different numbers in front of them, and the difference you can see across a room.",
-    axiom: "FFA",
+    structure: "The same frond as the apricot, held to a narrower angle and given twice the wood between one shoot and the next. That is the whole difference: peach reaches, apricot fills. Nothing else in the seven productions changes.",
+    axiom: "FFFFT",
     rules: [
-      // The same five forks, weighted the other way. Peach spends more wood
-      // between divisions and pulls harder upward, and that is the whole
-      // difference between its long reaching limbs and apricot's low dome.
-      "A -> 0.30 : FF[+FA][--FFA]",
-      "A -> 0.24 : FF[+FFA][-FA]",
-      "A -> 0.20 : FFF[++FA][-FA]",
-      "A -> 0.14 : FF[+FB][-FFA]",
-      "A -> 0.12 : FF[-FB][+FB]",
-      "B -> 0.40 : FF[+K][-K]FB",
-      "B -> 0.32 : F[+KB][-K]",
-      "B -> 0.28 : F[+K][-K]K",
+      // The same frond as the apricot, held narrower and given more wood
+      // between one shoot and the next, which is the whole difference
+      // between peach's long reaching branches and apricot's short ones.
+      "T -> FFF[+++A]F[---D]FF[++B]F[--B]FA",
+      "A -> FF[+B]FF[-B]F-E",
+      "E -> FF[+B]FF[-B]FA",
+      "D -> FF[+B]FF[-B]F+G",
+      "G -> FF[+B]FF[-B]FD",
+      "B -> F[+C]F[-C]FC",
+      "C -> F[+K][-K]FK",
     ].join("\n"),
-    steps: 10,
+    steps: 9,
     seed: 33,
     turtle: {
-      angle: 24,
-      taper: 0.78,
-      jitter: 10,
-      tropism: 1.1,
-      flowerSize: 1.9,
+      angle: 13,
+      taper: 0.75,
+      jitter: 9,
+      tropism: 0.6,
+      flowerSize: 1.45,
     },
     flower: { outer: "#dd9aab", heart: "#b25f79" },
     petals: 5,
