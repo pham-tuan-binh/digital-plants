@@ -520,6 +520,71 @@ export function dab(
   ctx.restore();
 }
 
+/* ------------------------------------------------------------- stamping --- */
+
+/**
+ * Watercolour is expensive to paint and cheap to copy.
+ *
+ * Every wash below is built from blurred fills, and a blurred fill is one of
+ * the costliest things a canvas can do: a flower head of eighteen petals runs
+ * to well over a hundred of them. Painting those afresh for every organ on
+ * every plate blocks the main thread for hundreds of milliseconds at a time,
+ * which is felt as the page refusing to scroll.
+ *
+ * So each dab is painted once, into its own small offscreen canvas, and after
+ * that it is stamped. A handful of shapes per colour, turned and stretched to
+ * fit, is indistinguishable from a handful of individually painted ones: a
+ * real brush repeats itself too.
+ */
+const SPRITE = 96;
+const VARIANTS = 6;
+const sprites = new Map<string, HTMLCanvasElement>();
+
+function dabSprite(colour: string, variant: number): HTMLCanvasElement {
+  const key = `${colour}|${variant}`;
+  const had = sprites.get(key);
+  if (had) return had;
+
+  const cv = document.createElement("canvas");
+  cv.width = SPRITE;
+  cv.height = SPRITE;
+  const ctx = cv.getContext("2d");
+  if (ctx) {
+    const r = rng(variant * 7919 + colour.length * 131 + 17);
+    const half = SPRITE / 2;
+    dab(ctx, splotch(r, half, half, half * 0.62, half * 0.62, 0, 1.1), colour, r, {
+      alpha: 1,
+    });
+  }
+  sprites.set(key, cv);
+  return cv;
+}
+
+/**
+ * Lay a pre-painted dab down at a point, turned and sized to taste.
+ */
+export function stamp(
+  ctx: CanvasRenderingContext2D,
+  colour: string,
+  r: Rng,
+  x: number,
+  y: number,
+  rx: number,
+  ry: number,
+  rotation: number,
+  alpha: number,
+): void {
+  const sprite = dabSprite(colour, Math.floor(r() * VARIANTS));
+  ctx.save();
+  ctx.globalAlpha = Math.min(1, Math.max(0, alpha));
+  ctx.translate(x, y);
+  ctx.rotate(rotation);
+  // The sprite is painted to the edges of its box, so a little overdraw keeps
+  // the soft fringe from being cut off.
+  ctx.drawImage(sprite, -rx * 1.15, -ry * 1.15, rx * 2.3, ry * 2.3);
+  ctx.restore();
+}
+
 /**
  * The footprint of a brush pressed to paper: a lopsided blob.
  *

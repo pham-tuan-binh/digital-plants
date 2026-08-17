@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Drawing, Ornament } from "@/lib/lsystem";
+import { dequeue, enqueue } from "@/lib/schedule";
 import {
-  dab,
   ink,
-  splotch,
+  stamp,
   mergeCollinearPts,
   rng,
   type Pt,
@@ -167,7 +167,7 @@ export default function PlantCanvas({
       (entries) => {
         for (const e of entries) setNear(e.isIntersecting);
       },
-      { rootMargin: "250% 0px 250% 0px", threshold: 0 },
+      { rootMargin: "120% 0px 120% 0px", threshold: 0 },
     );
     io.observe(wrap);
     return () => io.disconnect();
@@ -189,16 +189,16 @@ export default function PlantCanvas({
     [drawing.segments, merge],
   );
 
-  const paint = useCallback(() => {
+  const paint = useCallback((deadline: number): boolean => {
     const cv = canvas.current;
     const wrap = box.current;
-    if (!cv || !wrap) return;
+    if (!cv || !wrap) return false;
 
-    if (!near) return;
+    if (!near) return false;
 
     const cw = wrap.clientWidth;
     const ch = wrap.clientHeight;
-    if (cw < 2 || ch < 2) return;
+    if (cw < 2 || ch < 2) return false;
 
     // Beyond about 1.5 the extra pixels buy nothing on a washed drawing, and
     // they cost a great deal of memory across a page this long.
@@ -217,7 +217,7 @@ export default function PlantCanvas({
     }
 
     const ctx = cv.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) return false;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     const b = drawing.bounds;
@@ -287,7 +287,15 @@ export default function PlantCanvas({
     }
 
     const from = laid.current.strokes;
-    if (target === from && !restart) return;
+    if (
+      target === from &&
+      !restart &&
+      laid.current.organs >= drawing.ornaments.length
+    ) {
+      return false;
+    }
+
+    let ranOut = false;
 
     // A drawing of three thousand marks puts far more graphite on the page
     // than one of thirty. Lighten and thin the stroke as the count climbs, or
@@ -306,7 +314,15 @@ export default function PlantCanvas({
 
     // --- stems -----------------------------------------------------------
     const heavy = strokes.length > HEAVY;
+    let drew = from;
     for (let i = from; i < target; i++) {
+      // Check the clock every few marks rather than every one.
+      // Check the clock every sixteenth mark rather than every one.
+      if ((i & 15) === 0 && performance.now() >= deadline) {
+        ranOut = true;
+        break;
+      }
+      drew = i + 1;
       const st = strokes[i];
       const a = P(st.x1, st.y1);
       const c = P(st.x2, st.y2);
@@ -328,14 +344,14 @@ export default function PlantCanvas({
         color: stemColour,
       });
     }
-    laid.current.strokes = target;
+    laid.current.strokes = drew;
 
     // --- organs ----------------------------------------------------------
     // A terminal flower sits after the last line the turtle drew, so once the
     // plant is fully out there is no later stroke to gate it against. Without
     // this, every bloom at the end of a word was silently dropped.
     const lastSrc =
-      target >= strokes.length
+      drew >= strokes.length
         ? Number.MAX_SAFE_INTEGER
         : target > 0
           ? strokes[target - 1].srcLast
@@ -352,6 +368,11 @@ export default function PlantCanvas({
       if (i < laid.current.organs) continue;
       if (o.srcIndex > lastSrc) break;
       laid.current.organs = i + 1;
+
+      if (performance.now() >= deadline) {
+        ranOut = true;
+        break;
+      }
 
       const lit = active === o.srcIndex;
       if (o.kind === "leaf") {
@@ -372,6 +393,8 @@ export default function PlantCanvas({
         );
       }
     }
+
+    return ranOut;
   }, [
     drawing.bounds,
     drawing.ornaments,
@@ -394,13 +417,15 @@ export default function PlantCanvas({
   ]);
 
   useEffect(() => {
-    paint();
+    const job = (deadline: number) => paint(deadline);
+    enqueue(job);
+    return () => dequeue(job);
   }, [paint]);
 
   useEffect(() => {
     const wrap = box.current;
     if (!wrap) return;
-    const ro = new ResizeObserver(() => paint());
+    const ro = new ResizeObserver(() => enqueue((d) => paint(d)));
     ro.observe(wrap);
     return () => ro.disconnect();
   }, [paint]);
@@ -489,12 +514,16 @@ function drawLeaf(
   );
   const tilt = Math.atan2(edge[1] - centre[1], edge[0] - centre[0]);
 
-  dab(
+  stamp(
     ctx,
-    splotch(r, centre[0], centre[1], rx, ry, tilt, 1.05),
     colour ? GREENS[Math.floor(r() * GREENS.length)] : PIGMENT,
     r,
-    { alpha: (lit ? 0.48 : 0.37) * weight },
+    centre[0],
+    centre[1],
+    rx,
+    ry,
+    tilt,
+    (lit ? 0.62 : 0.46) * weight,
   );
 }
 
@@ -570,20 +599,16 @@ function drawBloom(
       const wide = long * (0.44 + r() * 0.22);
       // A petal starts at the rim of the disc and reaches outward from it.
       const reach = disc * 0.8 + long * 0.85;
-      dab(
+      stamp(
         ctx,
-        splotch(
-          r,
-          heart[0] + Math.cos(a) * reach,
-          heart[1] + Math.sin(a) * reach,
-          long,
-          wide,
-          a,
-          1.05,
-        ),
         pigment,
         r,
-        { alpha: alpha * (outer ? 1 : 1.12) },
+        heart[0] + Math.cos(a) * reach,
+        heart[1] + Math.sin(a) * reach,
+        long,
+        wide,
+        a,
+        alpha * (outer ? 1.35 : 1.5),
       );
     }
   }
@@ -592,16 +617,16 @@ function drawBloom(
   // no distinct eye at all, and those are left alone.
   const eyeHue = colour ? style.hue.heart : PIGMENT;
   if (eyeHue) {
-    dab(
+    stamp(
       ctx,
-      splotch(r, heart[0], heart[1], disc, disc * 0.88, r() * Math.PI, 0.7),
       eyeHue,
       r,
-      {
-        alpha: (disc > 6 ? 0.5 : 0.42) * weight,
-        granulate: disc > 6,
-        bleed: 0.6,
-      },
+      heart[0],
+      heart[1],
+      disc,
+      disc * 0.88,
+      r() * Math.PI,
+      0.68 * weight,
     );
   }
 }
