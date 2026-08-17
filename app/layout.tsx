@@ -4,7 +4,9 @@ import "./globals.css";
 
 // One face for everything — prose, titles, and the notation alike.
 const garamond = EB_Garamond({
-  subsets: ["latin"],
+  // Vietnamese as well as latin: half the plants in the book are named in it,
+  // and without the subset every diacritic drops to a fallback face.
+  subsets: ["latin", "vietnamese"],
   style: ["normal", "italic"],
   display: "swap",
   variable: "--font-body",

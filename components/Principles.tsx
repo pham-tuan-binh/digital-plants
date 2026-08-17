@@ -152,6 +152,43 @@ export default function Principles() {
           and comes down to four habits, each of which is a single change to
           rules you already have.
         </p>
+        <p>
+          One of them needs something the alphabet has not had until now. A
+          turtle carrying a pen can draw a stem, and with brackets it can draw
+          every stem on a plant, but it has no way of saying that a leaf hangs
+          at this point, or that this shoot has finished and opened. Those are
+          not lines. Rather than build a leaf out of line segments and hope it
+          reads as one, two symbols are added that place an organ where the
+          turtle stands, facing the way it faces, and draw it in whatever way
+          suits it.
+        </p>
+
+        <table className="legend">
+          <caption>Table III. Two symbols for organs</caption>
+          <thead>
+            <tr>
+              <th scope="col">Symbol</th>
+              <th scope="col">Interpretation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">L</th>
+              <td>Place a leaf, facing the way the turtle faces.</td>
+            </tr>
+            <tr>
+              <th scope="row">K</th>
+              <td>Place a flower.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          They cost nothing structurally. Neither moves the turtle or changes
+          its heading, so a production can put one anywhere without disturbing
+          what the rest of the word draws. Everything that follows uses them,
+          and nothing before this page needed them.
+        </p>
       </div>
 
       {HABITS.map((habit) => (

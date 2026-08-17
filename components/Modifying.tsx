@@ -206,6 +206,15 @@ function Editor() {
           plant-shaped rules really is.
         </p>
 
+        <p>
+          A few of the systems below use one more symbol, <code>X</code>. It
+          has no interpretation at all: the turtle passes straight over it and
+          draws nothing. It exists only to be rewritten, which lets a
+          production carry structure forward without putting a line on the
+          page. It is the written equivalent of a dormant bud, a place where
+          nothing has happened yet that still decides what happens next.
+        </p>
+
         <p className="field-lead">Begin from one of these, or write your own.</p>
         <div className="chips">
           {ALL.map((p) => (

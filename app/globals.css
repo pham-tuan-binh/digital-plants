@@ -522,9 +522,9 @@ code,
   font-style: italic;
 }
 
+/* A word is shown whole. Putting the derivation in a scrolling box hid the
+   one thing it is there to demonstrate, which is how fast it grows. */
 .string-well {
-  max-height: 7rem;
-  overflow-y: auto;
   width: 100%;
 }
 
@@ -950,9 +950,6 @@ input[type="range"]::-moz-range-thumb {
     text-align: left;
   }
 
-  .string-well {
-    max-height: 5.5rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

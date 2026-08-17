@@ -17,16 +17,19 @@ import TreeGallery from "@/components/TreeGallery";
 /* The exposition follows Prusinkiewicz and Lindenmayer, The Algorithmic
    Beauty of Plants (Springer, 1990). Quoted phrasing is theirs. */
 
+/* The alphabet is introduced a few symbols at a time, where each is first
+   needed. Everything a turtle can do with a pen and nothing else. */
 const ALPHABET = [
   { sym: "F", does: "Move forward a step of length d, drawing a line." },
   { sym: "f", does: "Move forward a step of length d, drawing nothing." },
   { sym: "+", does: "Turn left by the angle increment δ." },
   { sym: "−", does: "Turn right by δ." },
+];
+
+/* Added in the chapter on branches, once a single path is not enough. */
+const BRACKETS = [
   { sym: "[", does: "Push the current state of the turtle onto a stack." },
   { sym: "]", does: "Pop a state, and make it the current state." },
-  { sym: "L", does: "Place a leaf, facing the way the turtle faces." },
-  { sym: "K", does: "Place a flower." },
-  { sym: "X", does: "Nothing. It shapes the word but draws no line." },
 ];
 
 export default function Page() {
@@ -240,15 +243,13 @@ export default function Page() {
             what it looks like.
           </p>
           <p>
-            Two entries in the table earn their place for less obvious reasons.{" "}
+            One entry earns its place for a less obvious reason.{" "}
             <code>f</code> moves without drawing, which sounds like a small
             convenience and is actually what lets a figure have holes in it: an
             island with a lake inside needs the pen lifted between them, and no
-            arrangement of drawn lines will do instead. <code>X</code> draws
-            nothing at all and is never seen, but it can appear in a production
-            and carry structure forward. It is the written equivalent of a
-            dormant bud: a place on the plant where nothing has happened yet,
-            which still decides what happens next.
+            arrangement of drawn lines will do instead. Four symbols is the
+            whole alphabet for now. The rest of this book adds three more, one
+            at a time, and only where the drawing cannot be made without them.
           </p>
           <p>
             One practical matter. The step <code>d</code> does not shrink by
@@ -291,6 +292,26 @@ export default function Page() {
             continues afterwards exactly as though the branch had never
             happened.
           </p>
+        </div>
+
+        <div className="scene-story">
+          <table className="legend">
+            <caption>Table II. Two more symbols</caption>
+            <thead>
+              <tr>
+                <th scope="col">Symbol</th>
+                <th scope="col">Interpretation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {BRACKETS.map((row) => (
+                <tr key={row.sym}>
+                  <th scope="row">{row.sym}</th>
+                  <td>{row.does}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
         <Plate n={5} caption="The same eight letters, without and with brackets.">
