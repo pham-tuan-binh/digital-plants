@@ -672,7 +672,11 @@ code,
 }
 
 input[type="range"] {
-  width: 100%;
+  /* The thumb is drawn centred on the ends of the track, so half of it hangs
+     outside the input's own box. Leaving it that width pushes the page a few
+     pixels wider than the screen on a phone. */
+  width: calc(100% - 1rem);
+  margin: 0 0.5rem;
   height: 1rem;
   background: transparent;
   cursor: pointer;
@@ -870,10 +874,15 @@ input[type="range"]::-moz-range-thumb {
     max-width: none;
   }
 
-  /* On a phone the plate takes a fixed slice off the top and the reading
-     happens underneath; the page scrolls inside itself if it must. */
+  /* A phone is portrait and so is a plant, so on a phone the plate is
+     measured against the width of the page rather than the height of the
+     window. A slice of viewport height that suits a landscape desktop leaves
+     a drawing stranded in the middle of a phone screen with a hand's width
+     of paper either side of it. */
   .scene-figure > .fig {
-    height: 38vh;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    max-height: 74vh;
   }
 
   .page-title {
@@ -904,7 +913,8 @@ input[type="range"]::-moz-range-thumb {
 
   .slider {
     width: 100%;
-    max-width: 20rem;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .dials {
@@ -942,7 +952,7 @@ input[type="range"]::-moz-range-thumb {
 
 @media (max-width: 30rem) {
   .scene-figure > .fig {
-    height: 34vh;
+    aspect-ratio: 5 / 6;
   }
 
   .scene-story > p,
@@ -965,5 +975,24 @@ input[type="range"]::-moz-range-thumb {
     animation-duration: 0.001ms !important;
     animation-delay: 0ms !important;
     transition-duration: 0.001ms !important;
+  }
+}
+
+/* ------------------------------------------------------------- touch -- */
+
+/* A finger is not a pointer. Controls keep their drawn size and gain the
+   room around them, so the page still reads as a book. */
+@media (pointer: coarse) {
+  .chip,
+  .btn,
+  .step,
+  .principle-btn {
+    min-height: 2.75rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  input[type="range"] {
+    height: 2.75rem;
   }
 }

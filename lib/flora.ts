@@ -50,32 +50,46 @@ export const FLORA: Flora[] = [
     latin: "Ochna integerrima",
     english: "yellow apricot",
     note: "The Tết tree of the south. It sheds its leaves in the weeks before the new year and then flowers on bare wood, so the whole crown turns yellow at once instead of a little at a time.",
-    structure: "The trunk forks low and hands its growth to equals, and each limb can fork again rather than only extending: that is the one production A → F[++A]F[--A], and it is the difference between a crown and three poles. Between forks the limb throws short spurs, B, and the flowers sit on those, close in to the wood, which is why the colour reads as a mass rather than a fringe.",
-    axiom: "FFFT",
+    structure: "Every one of the five ways a limb can divide puts both arms inside brackets. That is the whole reason this reads as a tree: the turtle shortens its step on entering a branch, so wood that stays outside the brackets never shortens and draws a pole the height of the drawing. The five differ in their angles and in how much wood they spend before dividing again, which is what keeps one half of the crown from mirroring the other. A limb that turns to twig, B, stays twig, and every twig production sets flower, so blossom runs along the wood rather than sitting at the ends of it.",
+    axiom: "FFA",
     rules: [
-      // Trunk into three scaffold limbs, and from there every limb divides
-      // rather than running on. A limb that only extends gives a bare pole
-      // with a tuft at the end; a limb that halves each time fills a crown.
-      "T -> F[++A]F[--A]FA",
-      "A -> 0.48 : F[++A]F[--A]",
-      "A -> 0.20 : F[++B]F[--A]",
-      "A -> 0.18 : F[--B]F[+A]",
-      "A -> 0.14 : FB",
-      "B -> [+K][-K]F[++K][--K]K",
+      // Both arms of every fork are bracketed. The step shrinks on entering a
+      // branch, so a limb that stays outside the brackets keeps its full
+      // length and draws a pole the height of the tree; bracketing both arms
+      // is what makes the wood get shorter and thinner as it divides.
+      // The four forks differ in angle and in how much wood they spend
+      // before dividing again, which keeps the crown from mirroring itself.
+      "A -> 0.26 : FF[+FA][-FFA]",
+      "A -> 0.20 : FF[++FA][-FA]",
+      "A -> 0.14 : F[+FFA][--FA]",
+      "A -> 0.22 : FF[++FB][-FA]",
+      "A -> 0.18 : F[-FB][+FB]",
+      // Once a limb turns to twig it stays twig, and every twig production
+      // sets flower. Apricot opens on bare wood and close in, so blossom
+      // runs along a twig rather than only at its tip, and the crown goes
+      // yellow all at once instead of a little at a time.
+      "B -> 0.38 : F[+K][-K]FB",
+      "B -> 0.34 : F[+KB][-K]",
+      "B -> 0.28 : F[+K][-K]K",
     ].join("\n"),
     steps: 9,
     seed: 14,
     turtle: {
-      angle: 28,
-      taper: 0.81,
-      jitter: 13,
-      tropism: 0.6,
-      flowerSize: 0.62,
+      angle: 26,
+      taper: 0.76,
+      jitter: 14,
+      tropism: 0.5,
+      // A flower is drawn at this multiple of the step it stands on, and the
+      // step has tapered to a twentieth of the trunk's by the time it gets
+      // there, so the number has to be large for the blossom to read at all.
+      flowerSize: 2.4,
     },
     flower: { outer: "#e0b23f", heart: "#a9762a" },
     petals: 5,
     scale: 1,
-    minDraw: 90,
+    // A tree, not a lucky sparse roll of it. The seed walk keeps looking
+    // until the crown is full, and shows the fullest it found if none is.
+    minDraw: 900,
   },
   {
     id: "dao",
@@ -83,31 +97,34 @@ export const FLORA: Flora[] = [
     latin: "Prunus persica",
     english: "peach blossom",
     note: "The Tết tree of the north, where the wood needs a real winter before it will set flower. The pink is deeper the colder the season was.",
-    structure: "Same fork, but weighted so a limb more often keeps going than divides, which is what gives peach its long reaching branches. Its spur B → [+K][-K]FK puts a pair of blossoms at the joint before continuing, so flower sits on old wood all the way along a limb rather than only near the ends.",
-    axiom: "FFFT",
+    structure: "The same five forks as the apricot, weighted the other way and given an extra generation to run. Peach spends more wood between one division and the next, and it holds a narrower angle, so its limbs reach further before they split. Nothing else separates the two trees: the same eight productions, different numbers in front of them, and the difference you can see across a room.",
+    axiom: "FFA",
     rules: [
-      "T -> F[++A]F[--A]FA",
-      // Peach keeps more of a leader than apricot does, so one arm of each
-      // fork carries on with a flowering spur on it.
-      "A -> 0.52 : F[++A]F[--A]",
-      "A -> 0.20 : F[++B]F[--A]",
-      "A -> 0.16 : F[--B]F[+A]",
-      "A -> 0.12 : FB",
-      "B -> [+K][-K]F[+K][-K]K",
+      // The same five forks, weighted the other way. Peach spends more wood
+      // between divisions and pulls harder upward, and that is the whole
+      // difference between its long reaching limbs and apricot's low dome.
+      "A -> 0.30 : FF[+FA][--FFA]",
+      "A -> 0.24 : FF[+FFA][-FA]",
+      "A -> 0.20 : FFF[++FA][-FA]",
+      "A -> 0.14 : FF[+FB][-FFA]",
+      "A -> 0.12 : FF[-FB][+FB]",
+      "B -> 0.40 : FF[+K][-K]FB",
+      "B -> 0.32 : F[+KB][-K]",
+      "B -> 0.28 : F[+K][-K]K",
     ].join("\n"),
     steps: 10,
     seed: 33,
     turtle: {
-      angle: 22,
-      taper: 0.8,
-      jitter: 8,
-      tropism: 1.4,
-      flowerSize: 0.5,
+      angle: 24,
+      taper: 0.78,
+      jitter: 10,
+      tropism: 1.1,
+      flowerSize: 1.9,
     },
     flower: { outer: "#dd9aab", heart: "#b25f79" },
     petals: 5,
     scale: 1,
-    minDraw: 90,
+    minDraw: 900,
   },
   {
     id: "sen",

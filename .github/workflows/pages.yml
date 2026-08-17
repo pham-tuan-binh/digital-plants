@@ -38,13 +38,16 @@ jobs:
           owner="${GITHUB_REPOSITORY%%/*}"
           if [ "$repo" = "${owner}.github.io" ]; then
             echo "path=" >> "$GITHUB_OUTPUT"
+            echo "origin=https://${owner}.github.io" >> "$GITHUB_OUTPUT"
           else
             echo "path=/${repo}" >> "$GITHUB_OUTPUT"
+            echo "origin=https://${owner}.github.io" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Build
         env:
           NEXT_PUBLIC_BASE_PATH: ${{ steps.base.outputs.path }}
+          NEXT_PUBLIC_SITE_ORIGIN: ${{ steps.base.outputs.origin }}
         run: npm run build
 
       - uses: actions/configure-pages@v5
