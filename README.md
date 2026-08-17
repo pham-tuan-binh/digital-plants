@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Digital Plant
 
-## Getting Started
+An illustrated book about Lindenmayer systems: rewrite a string of symbols,
+hand it to a turtle, and a plant appears. It ends in a Vietnamese garden and a
+pair of Tết trees.
 
-First, run the development server:
+Every figure is drawn on a canvas at read time, in graphite and watercolour
+wash, from the rules printed underneath it.
+
+## Run it
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open <http://localhost:3000>. Node 20 or newer.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build it
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+```
 
-## Learn More
+The site is fully static, so this writes plain files to `out/` with no server
+behind them. To preview that build the way GitHub Pages serves it:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npx serve out
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy it
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Pushing to `main` builds and publishes to GitHub Pages via
+`.github/workflows/pages.yml`. Enable it once under **Settings → Pages →
+Build and deployment → Source → GitHub Actions**.
 
-## Deploy on Vercel
+The workflow works out the URL prefix from the repository name on its own, so
+there is nothing to configure: a repo named `digital-plants` is served from
+`/digital-plants`, and a `<user>.github.io` repo is served from the root.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Where things are
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Path | What it holds |
+| --- | --- |
+| `lib/lsystem.ts` | The engine. `derive` rewrites and knows no geometry; `interpret` turns a word into strokes and knows no rewriting. |
+| `lib/ink.ts` | The drawing. Pencil ribbons, watercolour dabs, paper grain. |
+| `lib/schedule.ts` | One frame budget shared by every figure, so painting never blocks the scroll. |
+| `lib/flora.ts` | The plants, each with its axiom, rules, and turtle settings. |
+| `app/page.tsx` | The book, chapter by chapter. |
+
+The text quotes *The Algorithmic Beauty of Plants* by Przemysław
+Prusinkiewicz and Aristid Lindenmayer, which is [free to
+read](https://algorithmicbotany.org/papers/abop/abop.pdf).
+
+The stroke rendering owes its approach to
+[bolechen/doodles-faces](https://github.com/bolechen/doodles-faces) and
+[kengocodes/cyber-crowd](https://github.com/kengocodes/cyber-crowd), both MIT.
