@@ -113,6 +113,16 @@ export type TurtleOptions = {
   tropismAngle?: number;
   leafSize?: number;
   flowerSize?: number;
+  /**
+   * The largest an organ may be drawn, as a multiple of the opening step.
+   *
+   * An organ is sized from the step it stands on, which is right for a plant
+   * whose parts scale with the shoot that carries them. It is wrong for a
+   * tree: every flower on an apricot is the same size, and a production that
+   * happens to reach a twig early would otherwise open a blossom the width of
+   * a limb. Leave it unset and nothing is capped.
+   */
+  organCap?: number;
   budget?: number;
   seed?: number;
   /** Random jitter on every turn, in degrees. Makes a stand of grass look grown. */
@@ -152,7 +162,12 @@ export function interpret(
     budget = 60_000,
     seed = 7,
     jitter = 0,
+    organCap,
   } = opts;
+
+  /** An organ's size, held to the cap if the drawing sets one. */
+  const cap = organCap === undefined ? Infinity : organCap * step;
+  const organ = (size: number) => Math.min(size, cap);
 
   const rand = mulberry32(seed);
   const turn = (angle * Math.PI) / 180;
@@ -253,12 +268,12 @@ export function interpret(
           x: s.x,
           y: s.y,
           angle: s.heading,
-          size: leafSize * s.step,
+          size: organ(leafSize * s.step),
           srcIndex: i,
           depth: s.depth,
         });
-        mark(s.x + leafSize * s.step * 1.5, s.y + leafSize * s.step * 1.5);
-        mark(s.x - leafSize * s.step * 1.5, s.y - leafSize * s.step * 1.5);
+        mark(s.x + organ(leafSize * s.step) * 1.5, s.y + organ(leafSize * s.step) * 1.5);
+        mark(s.x - organ(leafSize * s.step) * 1.5, s.y - organ(leafSize * s.step) * 1.5);
         break;
       case "K":
         ornaments.push({
@@ -266,12 +281,12 @@ export function interpret(
           x: s.x,
           y: s.y,
           angle: s.heading,
-          size: flowerSize * s.step,
+          size: organ(flowerSize * s.step),
           srcIndex: i,
           depth: s.depth,
         });
-        mark(s.x + flowerSize * s.step * 2, s.y + flowerSize * s.step * 2);
-        mark(s.x - flowerSize * s.step * 2, s.y - flowerSize * s.step * 2);
+        mark(s.x + organ(flowerSize * s.step) * 2, s.y + organ(flowerSize * s.step) * 2);
+        mark(s.x - organ(flowerSize * s.step) * 2, s.y - organ(flowerSize * s.step) * 2);
         break;
       default:
         break; // placeholders like X carry structure, draw nothing

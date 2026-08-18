@@ -50,36 +50,36 @@ export const FLORA: Flora[] = [
     latin: "Ochna integerrima",
     english: "yellow apricot",
     note: "The Tết tree of the south. It sheds its leaves in the weeks before the new year and then flowers on bare wood, so the whole crown turns yellow at once instead of a little at a time.",
-    structure: "A limb here is built the way a fern frond is: one axis, A, that keeps going and throws a shoot to either side at every node, where each shoot B is the same figure one size down and the smallest of them, C, carries the blossom. Nothing in the rules grades the shoots by length. A shoot near the base of a limb has had every pass to develop and one near the tip has had a single pass, so the limb runs from long to short along its own length on its own, which is what gives both a frond and a flowering branch their shape. The turn sits on the second of the two leader productions rather than on both, because turning at every node curls a limb into a circle instead of bending it.",
-    axiom: "FFFFT",
+    structure: "This is the field standard from the pages on trees, unchanged: the tree with no neighbours and no reason to hurry upward, whose leader gives up early and hands its growth to two equals, so the crown spreads as wide as it is tall. Two productions are added to it and only two, so that a limb can end in flowering twig rather than in more limb. Apricot opens on bare wood and close in, so the twig sets flower along its whole length instead of at its end, which is why the colour reads as a mass held inside the crown rather than as a fringe around it.",
+    axiom: "FFA",
     rules: [
-      // The trunk hands its growth to four limbs and a leader, spread wide.
-      "T -> FF[++++A]F[----D]FF[++B]F[--B]FA",
-      // A limb is a frond: one axis that keeps going, throwing a shoot to
-      // either side at every node and arcing over as it lengthens. D is the
-      // same limb arcing the other way, so the two sides of the tree lean
-      // apart instead of together.
-      "A -> F[+B]F[-B]F-E",
-      "E -> F[+B]F[-B]FA",
-      "D -> F[+B]F[-B]F+G",
-      "G -> F[+B]F[-B]FD",
-      // A shoot is the same figure one size down, and the smallest of them
-      // carries the blossom. Nothing grades these by hand: a shoot at the
-      // base of a limb has had every pass to develop and one at the tip has
-      // had a single pass, so the limb runs from long to short along its
-      // own length, which is what a frond does and what a flowering branch
-      // does too.
-      "B -> F[+C]F[-C]FC",
-      "C -> F[+K][-K]FK",
+      // This is the field standard from the chapter on trees, which is the
+      // tree that has no neighbours and no reason to hurry upward: the
+      // leader gives up early and hands its growth to two equals, so the
+      // crown spreads as wide as it is tall. Two more productions are added
+      // to it, and only two, so that a limb can end in flowering twig.
+      "A -> 0.34 : F[+FA][-FA]",
+      "A -> 0.24 : F[+FA]FA",
+      "A -> 0.22 : F[-FA]FA",
+      "A -> 0.12 : F[+FB][-FA]",
+      "A -> 0.08 : F[-FB][+FB]",
+      // Apricot opens on bare wood and close in, so a twig sets flower along
+      // its whole length rather than at its end.
+      "B -> 0.44 : F[+K][-K]FB",
+      "B -> 0.32 : F[+KB][-K]",
+      "B -> 0.24 : F[+K][-K]K",
     ].join("\n"),
-    steps: 9,
-    seed: 9,
+    steps: 10,
+    seed: 24,
     turtle: {
-      angle: 15,
-      taper: 0.72,
-      jitter: 10,
-      tropism: 0,
-      flowerSize: 0.95,
+      angle: 27,
+      taper: 0.74,
+      jitter: 7,
+      tropism: 1.2,
+      flowerSize: 2.2,
+      // Every flower on an apricot is the same size, whatever thickness of
+      // wood it happens to open on.
+      organCap: 0.5,
     },
     flower: { outer: "#e0b23f", heart: "#a9762a" },
     petals: 5,
@@ -94,28 +94,31 @@ export const FLORA: Flora[] = [
     latin: "Prunus persica",
     english: "peach blossom",
     note: "The Tết tree of the north, where the wood needs a real winter before it will set flower. The pink is deeper the colder the season was.",
-    structure: "The same frond as the apricot, held to a narrower angle and given twice the wood between one shoot and the next. That is the whole difference: peach reaches, apricot fills. Nothing else in the seven productions changes.",
-    axiom: "FFFFT",
+    structure: "The old orchard, from the same pages: pruned for fruit and not for height, so the crotch angles are wide, the forks are few, and there is a heavy wobble in every joint. It carries the same two flowering productions as the apricot. Everything that separates the two trees is already in the tree chapter, in the difference between a tree left alone in a field and a tree cut back every year.",
+    axiom: "FA",
     rules: [
-      // The same frond as the apricot, held narrower and given more wood
-      // between one shoot and the next, which is the whole difference
-      // between peach's long reaching branches and apricot's short ones.
-      "T -> FFF[+++A]F[---D]FF[++B]F[--B]FA",
-      "A -> FF[+B]FF[-B]F-E",
-      "E -> FF[+B]FF[-B]FA",
-      "D -> FF[+B]FF[-B]F+G",
-      "G -> FF[+B]FF[-B]FD",
-      "B -> F[+C]F[-C]FC",
-      "C -> F[+K][-K]FK",
+      // The old orchard from the same chapter: pruned for fruit and not for
+      // height, so the crotch angles are wide, the forks are few, and there
+      // is a heavy wobble in every joint. Left long enough, a tree cut back
+      // this hard grows into its own knuckles.
+      "A -> 0.36 : F[++FA][--FA]F",
+      "A -> 0.20 : F[++FA]FF",
+      "A -> 0.16 : F[--FA]FF",
+      "A -> 0.16 : F[++FB][--FA]",
+      "A -> 0.12 : F[--FB][++FB]",
+      "B -> 0.42 : F[+K][-K]FB",
+      "B -> 0.34 : F[+KB][-K]",
+      "B -> 0.24 : F[+K][-K]K",
     ].join("\n"),
-    steps: 9,
-    seed: 33,
+    steps: 10,
+    seed: 12,
     turtle: {
-      angle: 13,
-      taper: 0.75,
-      jitter: 9,
-      tropism: 0.6,
-      flowerSize: 1.45,
+      angle: 19,
+      taper: 0.78,
+      jitter: 14,
+      tropism: 0.8,
+      flowerSize: 2.0,
+      organCap: 0.55,
     },
     flower: { outer: "#dd9aab", heart: "#b25f79" },
     petals: 5,
