@@ -62,25 +62,23 @@ export default function Page() {
               <cite>A New Kind of Science</cite> by Stephen Wolfram.
             </p>
             <p>
-              It argues a very simple idea, that our world and the phenomena
-              around it can be described by a set of very simple rules, like
-              cellular automata as you have seen in Conway&rsquo;s Game of Life,
-              if you&rsquo;re familiar.
+              It argues a simple idea, that our world and the phenomena around
+              it can be described by a set of simple rules, like the cellular
+              automata of Conway&rsquo;s Game of Life.
             </p>
             <p>
-              In short, complexity can emerge from simplicity. And a very
-              beautiful example of this is the Lindenmayer system.
+              In short, complexity can emerge from simplicity. And a beautiful
+              example of this is the Lindenmayer system.
             </p>
             <p>
               While formally it is used to model the behavior of plant cells,
-              one can leverage the simple basis of L-systems to create
-              visualizations of plants and flowers themselves.
+              you can use its simple basis to draw the plants and flowers
+              themselves.
             </p>
             <p>
-              Waiting for my flight to Seoul, I used Claude to help create a
-              visual interactive article on L-systems and how it can be used to
-              generate the Vietnamese flora that I&rsquo;ve seen through my
-              childhood.
+              Waiting for my flight to Seoul, I used Claude to help create an
+              interactive article on L-systems and how it can be used to
+              generate the Vietnamese flora I grew up around.
             </p>
             <footer className="note-signature">
               <a href="https://garden.binhph.am">Binh Pham</a>
