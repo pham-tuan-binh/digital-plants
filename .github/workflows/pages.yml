@@ -31,12 +31,18 @@ jobs:
 
       - name: Resolve base path
         id: base
-        # A user or org site (<name>.github.io) is served from the root; every
-        # other repository is served from /<repo>.
+        # A custom domain (public/CNAME) is served from the root of that
+        # domain, so it takes no prefix. Without one, a user or org site
+        # (<name>.github.io) is served from the root and every other
+        # repository from /<repo>.
         run: |
           repo="${GITHUB_REPOSITORY#*/}"
           owner="${GITHUB_REPOSITORY%%/*}"
-          if [ "$repo" = "${owner}.github.io" ]; then
+          if [ -f public/CNAME ]; then
+            domain="$(tr -d '[:space:]' < public/CNAME)"
+            echo "path=" >> "$GITHUB_OUTPUT"
+            echo "origin=https://${domain}" >> "$GITHUB_OUTPUT"
+          elif [ "$repo" = "${owner}.github.io" ]; then
             echo "path=" >> "$GITHUB_OUTPUT"
             echo "origin=https://${owner}.github.io" >> "$GITHUB_OUTPUT"
           else
