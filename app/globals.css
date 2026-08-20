@@ -239,6 +239,39 @@ code,
   letter-spacing: 0.16em;
 }
 
+/* A quoted note in the author's own voice, set narrower than the measure and
+   ruled down one side, so it reads as an aside to the book rather than part
+   of the exposition. */
+.note {
+  margin: 0 auto;
+  max-width: 33rem;
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--hair);
+}
+
+.note p {
+  margin: 0 0 0.85rem;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+}
+
+/* The opening line stands on its own — the thesis of the whole page. */
+.note-open {
+  font-style: italic;
+  font-size: 1.2rem;
+  line-height: 1.4;
+  text-align: left !important;
+  hyphens: none;
+}
+
+.note-signature {
+  margin-top: 1.1rem;
+  font-size: 0.8rem;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.16em;
+}
+
 .hero-title {
   margin: 0 0 1rem;
   font-size: clamp(1.35rem, 2.1vw, 1.75rem);
@@ -956,10 +989,15 @@ input[type="range"]::-moz-range-thumb {
   }
 
   .scene-story > p,
+  .note p,
   .principle-body {
     text-align: left;
   }
 
+  /* No room for an indent this narrow; the rule alone marks the quotation. */
+  .note {
+    padding-left: 1rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

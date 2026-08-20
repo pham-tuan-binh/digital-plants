@@ -51,6 +51,44 @@ export default function Page() {
         </div>
       </Scene>
 
+      {/* ------------------------------------------------------------- note -- */}
+      <Scene id="note" label="A note">
+        <div className="scene-story">
+          <blockquote className="note">
+            <p className="note-open">Simplicity compounds.</p>
+            <p>
+              When I was in high school, one of the pieces of writing which
+              stuck with me the most (although I never finished it) was{" "}
+              <cite>A New Kind of Science</cite> by Stephen Wolfram.
+            </p>
+            <p>
+              It argues a very simple idea, that our world and the phenomena
+              around it can be described by a set of very simple rules, like
+              cellular automata as you have seen in Conway&rsquo;s Game of Life,
+              if you&rsquo;re familiar.
+            </p>
+            <p>
+              In short, complexity can emerge from simplicity. And a very
+              beautiful example of this is the Lindenmayer system.
+            </p>
+            <p>
+              While formally it is used to model the behavior of plant cells,
+              one can leverage the simple basis of L-systems to create
+              visualizations of plants and flowers themselves.
+            </p>
+            <p>
+              Waiting for my flight to Seoul, I used Claude to help create a
+              visual interactive article on L-systems and how it can be used to
+              generate the Vietnamese flora that I&rsquo;ve seen through my
+              childhood.
+            </p>
+            <footer className="note-signature">
+              <a href="https://garden.binhph.am">Binh Pham</a>
+            </footer>
+          </blockquote>
+        </div>
+      </Scene>
+
       {/* --------------------------------------------------- i · rewriting -- */}
       <Scene id="rewriting" label="Rewriting">
         <div className="scene-story">
@@ -61,24 +99,23 @@ export default function Page() {
           <p className="lead">
             The central concept is that of rewriting, a technique for defining
             complex objects by successively replacing parts of a simple initial
-            object, using a set of rewriting rules called{" "}
-            <em>productions</em>. A production is written{" "}
-            <code>a → χ</code>. The single letter <code>a</code> on the left is
-            its <em>predecessor</em>; the word <code>χ</code> on the right is
-            its <em>successor</em>. Any letter for which no production has been
-            given is assumed to carry the identity production{" "}
-            <code>a → a</code>, and so stands for itself.
+            object, using a set of rewriting rules called <em>productions</em>.
+            A production is written <code>a → χ</code>. The single letter{" "}
+            <code>a</code> on the left is its <em>predecessor</em>; the word{" "}
+            <code>χ</code> on the right is its <em>successor</em>. Any letter
+            for which no production has been given is assumed to carry the
+            identity production <code>a → a</code>, and so stands for itself.
           </p>
           <p>
-            A system needs three things, and no more: an alphabet{" "}
-            <code>V</code> of the symbols allowed; a non-empty word{" "}
-            <code>ω</code> over that alphabet, called the <em>axiom</em>, which
-            is where rewriting begins; and a finite set of productions{" "}
-            <code>P</code>. Where exactly one production exists for each
-            letter, the system is deterministic, and the same axiom always yields
-            the same plant. Give a letter two productions and a weight for
-            each, and you have a stochastic system, which is how a species
-            produces specimens rather than clones.
+            A system needs three things, and no more: an alphabet <code>V</code>{" "}
+            of the symbols allowed; a non-empty word <code>ω</code> over that
+            alphabet, called the <em>axiom</em>, which is where rewriting
+            begins; and a finite set of productions <code>P</code>. Where
+            exactly one production exists for each letter, the system is
+            deterministic, and the same axiom always yields the same plant. Give
+            a letter two productions and a weight for each, and you have a
+            stochastic system, which is how a species produces specimens rather
+            than clones.
           </p>
           <p>
             The smallest system worth writing down has two letters and two
@@ -87,13 +124,12 @@ export default function Page() {
             <code>ab</code>, <code>aba</code>, <code>abaab</code>,{" "}
             <code>abaababa</code>. Count the letters and you get 1, 1, 2, 3, 5,
             8. The Fibonacci series falls out of two productions and a starting
-            letter, and it is not a coincidence dressed up: every{" "}
-            <code>a</code> in one word contributes an <code>a</code> and a{" "}
-            <code>b</code> to the next, every <code>b</code> contributes an{" "}
-            <code>a</code>, so the count of letters obeys a linear recurrence.
-            Sunflower spirals and pine cone scales fall out of the same
-            arithmetic for the same reason: they are counting a process that
-            adds to itself.
+            letter, and it is not a coincidence dressed up: every <code>a</code>{" "}
+            in one word contributes an <code>a</code> and a <code>b</code> to
+            the next, every <code>b</code> contributes an <code>a</code>, so the
+            count of letters obeys a linear recurrence. Sunflower spirals and
+            pine cone scales fall out of the same arithmetic for the same
+            reason: they are counting a process that adds to itself.
           </p>
           <p>
             Lindenmayer proposed all of this in 1968, and not in order to draw
@@ -113,15 +149,15 @@ export default function Page() {
             {"bᵣ → aᵣ          bₗ → aₗ"}
           </p>
           <p>
-            The essential difference from an ordinary grammar lies in the
-            method of applying productions. In Chomsky grammars productions are
-            applied sequentially, one symbol at a time, the way a compiler
-            parses a line. In L-systems they are applied in parallel, and
-            simultaneously replace all the letters of the word. That is not a
-            matter of efficiency. Productions are intended to capture cell
-            divisions in multicellular organisms, where many divisions occur at
-            the same moment. If the rewriting did not happen all at once it would
-            not be describing growth at all.
+            The essential difference from an ordinary grammar lies in the method
+            of applying productions. In Chomsky grammars productions are applied
+            sequentially, one symbol at a time, the way a compiler parses a
+            line. In L-systems they are applied in parallel, and simultaneously
+            replace all the letters of the word. That is not a matter of
+            efficiency. Productions are intended to capture cell divisions in
+            multicellular organisms, where many divisions occur at the same
+            moment. If the rewriting did not happen all at once it would not be
+            describing growth at all.
           </p>
         </div>
 
@@ -161,12 +197,12 @@ export default function Page() {
             the word before it. That single fact settles how fast anything here
             can grow: the length of the word, and so the size of the plant, is
             always some combination of polynomials and exponentials in the
-            number of passes. It is why four passes of a modest-looking rule
-            can put several thousand segments on the page, and why no
-            arrangement of these rules will ever produce something that grows
-            and then quietly levels off. A real plant does level off. Getting
-            that back is possible, but it costs more machinery than any system
-            on these pages uses.
+            number of passes. It is why four passes of a modest-looking rule can
+            put several thousand segments on the page, and why no arrangement of
+            these rules will ever produce something that grows and then quietly
+            levels off. A real plant does level off. Getting that back is
+            possible, but it costs more machinery than any system on these pages
+            uses.
           </p>
         </div>
       </Scene>
@@ -182,23 +218,23 @@ export default function Page() {
             Rewriting only ever produces more text. A word of four thousand
             symbols is not yet a picture of anything, and the original theory
             had no geometry in it at all; the emphasis was on topology, on which
-            cell adjoined which. Interpretations were added later. The
-            one used here is turtle geometry, borrowed from Abelson and
-            diSessa: the finished word is handed to a turtle, which reads it
-            from left to right and leaves a trail behind it.
+            cell adjoined which. Interpretations were added later. The one used
+            here is turtle geometry, borrowed from Abelson and diSessa: the
+            finished word is handed to a turtle, which reads it from left to
+            right and leaves a trail behind it.
           </p>
           <p>
             A <em>state</em> of the turtle is a triplet (x, y, α), where the
-            Cartesian coordinates (x, y) represent its position and the angle
-            α, called the <em>heading</em>, is the direction in which it faces.
-            Fix a step size <code>d</code> and an angle increment{" "}
-            <code>δ</code>, and each letter becomes a command.
+            Cartesian coordinates (x, y) represent its position and the angle α,
+            called the <em>heading</em>, is the direction in which it faces. Fix
+            a step size <code>d</code> and an angle increment <code>δ</code>,
+            and each letter becomes a command.
           </p>
           <p>
             Notice what the turtle does not have. It holds no map, no list of
-            coordinates, no idea where it is on the page or how it got there.
-            It knows one position and one heading, and every instruction it
-            takes is relative to those: not <em>go to that point</em> but{" "}
+            coordinates, no idea where it is on the page or how it got there. It
+            knows one position and one heading, and every instruction it takes
+            is relative to those: not <em>go to that point</em> but{" "}
             <em>turn a little and carry on</em>. That restriction is why the
             method suits plants so well. A bud has no notion of where it sits on
             the plant either. It knows which way it is pointing with respect to
@@ -237,19 +273,18 @@ export default function Page() {
             It is a separate machine, and that separation is the whole trick:
             the biology lives in the productions, the geometry lives here, and
             neither half needs to know anything about the other. One consequence
-            is worth pausing on. The same word, read with{" "}
-            <code>δ</code> at twenty degrees and at ninety, gives a shrub and a
-            lattice. The rules fix what is connected to what; the turtle fixes
-            what it looks like.
+            is worth pausing on. The same word, read with <code>δ</code> at
+            twenty degrees and at ninety, gives a shrub and a lattice. The rules
+            fix what is connected to what; the turtle fixes what it looks like.
           </p>
           <p>
-            One entry earns its place for a less obvious reason.{" "}
-            <code>f</code> moves without drawing, which sounds like a small
-            convenience and is actually what lets a figure have holes in it: an
-            island with a lake inside needs the pen lifted between them, and no
-            arrangement of drawn lines will do instead. Four symbols is the
-            whole alphabet for now. The rest of this book adds three more, one
-            at a time, and only where the drawing cannot be made without them.
+            One entry earns its place for a less obvious reason. <code>f</code>{" "}
+            moves without drawing, which sounds like a small convenience and is
+            actually what lets a figure have holes in it: an island with a lake
+            inside needs the pen lifted between them, and no arrangement of
+            drawn lines will do instead. Four symbols is the whole alphabet for
+            now. The rest of this book adds three more, one at a time, and only
+            where the drawing cannot be made without them.
           </p>
           <p>
             One practical matter. The step <code>d</code> does not shrink by
@@ -278,19 +313,18 @@ export default function Page() {
             botanically motivated notion of a branch axis. Its edges are called
             segments. A segment with more segments after it is an{" "}
             <em>internode</em>; one with nothing after it is an <em>apex</em>.
-            The axis beginning at the root has order zero, and an axis
-            branching off an axis of order <em>n</em> has order <em>n</em>+1.
+            The axis beginning at the root has order zero, and an axis branching
+            off an axis of order <em>n</em> has order <em>n</em>+1.
           </p>
           <p>
             Two symbols are enough to write such a tree as a flat string.{" "}
             <code>[</code> pushes the current state of the turtle onto a
             pushdown stack: its position, its heading, and anything else it is
-            carrying, such as the width of the line. <code>]</code> pops a
-            state off that stack and makes it the current state. No line is
-            drawn, although in general the position of the turtle changes.
-            Whatever lies between the two brackets is a branch, and the stem
-            continues afterwards exactly as though the branch had never
-            happened.
+            carrying, such as the width of the line. <code>]</code> pops a state
+            off that stack and makes it the current state. No line is drawn,
+            although in general the position of the turtle changes. Whatever
+            lies between the two brackets is a branch, and the stem continues
+            afterwards exactly as though the branch had never happened.
           </p>
         </div>
 
@@ -314,7 +348,10 @@ export default function Page() {
           </table>
         </div>
 
-        <Plate n={5} caption="The same eight letters, without and with brackets.">
+        <Plate
+          n={5}
+          caption="The same eight letters, without and with brackets."
+        >
           <BracketPair />
         </Plate>
 
@@ -356,8 +393,8 @@ export default function Page() {
             Alvy Ray Smith named it <em>database amplification</em>: the
             generation of complex-looking objects from very concise
             descriptions. Two productions and an angle will fill a page. The
-            plant is not stored anywhere. It is recomputed, from almost
-            nothing, every time you look.
+            plant is not stored anywhere. It is recomputed, from almost nothing,
+            every time you look.
           </p>
         </div>
       </Scene>
@@ -408,13 +445,11 @@ export default function Page() {
           </p>
           <p className="muted">
             Nothing on these pages is a photograph or an illustration. Every
-            plant is derived from its rules and drawn, stroke by stroke, in
-            your browser at the moment you turn to it. Turn away and back and
-            the hand moves differently.
+            plant is derived from its rules and drawn, stroke by stroke, in your
+            browser at the moment you turn to it. Turn away and back and the
+            hand moves differently.
           </p>
         </div>
-
-
       </Scene>
     </Story>
   );
