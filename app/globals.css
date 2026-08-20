@@ -239,14 +239,11 @@ code,
   letter-spacing: 0.16em;
 }
 
-/* A quoted note in the author's own voice, set narrower than the measure and
-   ruled down one side, so it reads as an aside to the book rather than part
-   of the exposition. */
+/* A quoted note in the author's own voice. It takes the full measure and the
+   same setting as the exposition — the signature under it is what marks it as
+   a quotation, so it needs no rule or indent as well. */
 .note {
-  margin: 0 auto;
-  max-width: 33rem;
-  padding-left: 1.5rem;
-  border-left: 1px solid var(--hair);
+  margin: 0;
 }
 
 .note p {
@@ -992,11 +989,6 @@ input[type="range"]::-moz-range-thumb {
   .note p,
   .principle-body {
     text-align: left;
-  }
-
-  /* No room for an indent this narrow; the rule alone marks the quotation. */
-  .note {
-    padding-left: 1rem;
   }
 }
 
