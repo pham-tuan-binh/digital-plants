@@ -41,6 +41,15 @@ const height = Number(args.get("height") ?? 1080);
  * drawing for pixels it will not draw.
  */
 const density = Number(args.get("density") ?? 1.5);
+/**
+ * What the frames are piped in as.
+ *
+ * PNG is exact and twice as slow to take. At this density the frames are
+ * shrunk by a third on the way into the encoder, which averages away what
+ * little a high-quality JPEG loses — a shade under 50dB against the lossless
+ * capture, well beyond anything H.264 will preserve after it.
+ */
+const still = args.get("still") ?? "jpeg";
 
 /* ----------------------------------------------------------------- tools -- */
 
@@ -105,7 +114,7 @@ const encoder = spawn(
     "-y",
     "-f", "image2pipe",
     "-framerate", String(fps),
-    "-c:v", "png",
+    "-c:v", still === "png" ? "png" : "mjpeg",
     "-i", "-",
     "-i", wav,
     "-map", "0:v:0",
@@ -147,7 +156,13 @@ for (let i = 0; i < frames; i++) {
   if ((await page.evaluate((n) => window.__film.seek(n), i)) < 0) {
     restless.push(i);
   }
-  await write(await page.screenshot({ type: "png", clip }));
+  await write(
+    await page.screenshot(
+      still === "png"
+        ? { type: "png", clip }
+        : { type: "jpeg", quality: 96, clip },
+    ),
+  );
   if ((i + 1) % 30 === 0 || i + 1 === frames) {
     const per = (Date.now() - started) / (i + 1);
     const left = ((frames - i - 1) * per) / 1000;

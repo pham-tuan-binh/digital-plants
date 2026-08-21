@@ -6,15 +6,16 @@ import { depthMap } from "@/lib/lsystem";
 import { pending } from "@/lib/schedule";
 import type { Pass } from "./derivation";
 import {
-  BOUQUET,
   CUES,
+  DISSOLVE,
   FPS,
   FRAMES,
   HERO,
   TITLED,
   beatAt,
+  lineAt,
   shotAt,
-  type Movement,
+  type Shot,
 } from "./score";
 import "./film.css";
 
@@ -84,12 +85,13 @@ function Title({ local, length }: { local: number; length: number }) {
   // the titling comes up under it once there is something to title. A stroke
   // or two is already down on the first frame, because a film whose opening
   // frame is blank paper has a blank paper for a poster.
-  const grow = ease(clamp01((local + 3) / (length * 0.5)));
-  const lift = ease(clamp01((local - TITLED + 14) / 26));
-  const said = ease(clamp01((local - TITLED - 8) / 26));
+  const grow = ease(clamp01((local + 3) / (length * 0.52)));
+  const lift = ease(clamp01((local - TITLED + 18) / 30));
+  const said = ease(clamp01((local - TITLED - 4) / 34));
+  const fade = ease(clamp01((length - local) / DISSOLVE));
 
   return (
-    <div className="shot-title">
+    <div className="shot-title" style={{ opacity: fade }}>
       <div className="title-plate">
         <PlantCanvas
           drawing={HERO}
@@ -112,9 +114,9 @@ function Title({ local, length }: { local: number; length: number }) {
   );
 }
 
-function Flora({ movement, local }: { movement: Movement; local: number }) {
-  const beat = beatAt(movement, local);
-  const { plant } = movement;
+function Flora({ shot, local }: { shot: Extract<Shot, { kind: "flora" }>; local: number }) {
+  const beat = beatAt(shot, local);
+  const { plant } = shot.movement;
   const pass: Pass | null = beat.pass;
 
   // Struck while the pass is being announced, fresh once it has been made.
@@ -126,12 +128,18 @@ function Flora({ movement, local }: { movement: Movement; local: number }) {
       : (i: number) =>
           inSpans(pass.written, i) ? (" is-fresh" as const) : ("" as const);
 
-  const accent = plant.flower?.outer ?? "#8a8577";
-
   return (
     <div
       className="shot-flora"
-      style={{ ["--accent" as string]: accent, opacity: beat.opened }}
+      style={{
+        ["--accent" as string]: plant.flower?.outer ?? "#8a8577",
+        // The marking washes in and out rather than snapping on, which is
+        // most of what makes a pass read as something happening.
+        ["--wash" as string]: `${(46 * beat.wash).toFixed(1)}%`,
+        ["--wash-ink" as string]: `${(15 * beat.wash).toFixed(1)}%`,
+        ["--rule-ink" as string]: `${(15 * beat.wash).toFixed(1)}%`,
+        opacity: beat.fade,
+      }}
     >
       <div className="flora-plate">
         <PlantCanvas
@@ -140,7 +148,7 @@ function Flora({ movement, local }: { movement: Movement; local: number }) {
           roughness={1.1}
           merge
           anchor="bottom"
-          seed={movement.seed}
+          seed={shot.movement.seed}
           flower={plant.flower}
           petals={plant.petals}
           heartScale={plant.heartScale}
@@ -151,68 +159,35 @@ function Flora({ movement, local }: { movement: Movement; local: number }) {
       </div>
 
       <div className="flora-side">
-        <p className="flora-name">{plant.name}</p>
-        <p className="flora-latin">
+        <p className="flora-name" style={{ opacity: beat.named }}>
+          {plant.name}
+        </p>
+        <p className="flora-latin" style={{ opacity: beat.named }}>
           {plant.latin}, the {plant.english}
         </p>
 
         <p className="flora-system">
-          <b>ω</b>
-          {plant.axiom}
-          {"\n"}
-          {plant.rules.split("\n").map((line, i) => (
-            <span key={i}>
-              {i === 0 ? <b>P</b> : <b> </b>}
-              {line.replace(/->/g, "→")}
-              {"\n"}
+          {shot.movement.system.map((line, i) => (
+            <span
+              className="sys-line"
+              key={i}
+              style={{ opacity: lineAt(beat.ruled, i) }}
+            >
+              <b>{line.mark}</b>
+              {line.text}
             </span>
           ))}
-          <b>δ</b>
-          {plant.turtle.angle}°
         </p>
 
-        <div className="flora-word">
+        <div className="flora-word" style={{ opacity: beat.worded }}>
           <Word text={beat.rung.word} mark={mark} />
         </div>
 
-        <p className="flora-count">
+        <p className="flora-count" style={{ opacity: beat.worded }}>
           n = {beat.n} &middot; {beat.rung.word.length.toLocaleString()}{" "}
           {beat.rung.word.length === 1 ? "symbol" : "symbols"}
         </p>
       </div>
-    </div>
-  );
-}
-
-/**
- * The rest of the flora, one plate at a time.
- *
- * Each is already grown when it appears — no drawing-in, no cross-fade. A
- * plate is turned over, held, and turned again.
- */
-function Flip({ local, each }: { local: number; each: number }) {
-  const i = Math.max(0, Math.min(BOUQUET.length - 1, Math.floor(local / each)));
-  const { plant, drawing, seed } = BOUQUET[i];
-
-  return (
-    <div className="shot-flip">
-      <div className="flip-plate">
-        <PlantCanvas
-          drawing={drawing}
-          reveal={drawing.segments.length}
-          roughness={1.1}
-          merge
-          anchor="bottom"
-          seed={seed}
-          flower={plant.flower}
-          petals={plant.petals}
-          heartScale={plant.heartScale}
-          rings={plant.rings}
-          stemColour={plant.stemColour}
-          title={plant.name}
-        />
-      </div>
-      <p className="flip-name">{plant.name}</p>
     </div>
   );
 }
@@ -307,10 +282,8 @@ export default function Film() {
       <div className="film-stage">
         {shot.kind === "title" ? (
           <Title local={local} length={shot.length} />
-        ) : shot.kind === "flora" ? (
-          <Flora movement={shot.movement} local={local} />
         ) : (
-          <Flip local={local} each={shot.each} />
+          <Flora shot={shot} local={local} />
         )}
       </div>
     </div>

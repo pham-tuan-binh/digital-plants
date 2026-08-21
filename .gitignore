@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# the film soundtrack, written next to the video while it encodes
+/film/*.wav

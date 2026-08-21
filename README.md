@@ -31,12 +31,18 @@ npx serve out
 
 ## The film
 
-`film/digital-plant.mp4` is a thirty-second reel of the same figures: the
-opening plate of the book drawing itself, five species with the word on one
-side and the plant it draws on the other, and then the rest of the flora
-turned over one plate at a time. On each pass the letters a production is
-about to replace are marked in graphite, and what it writes in their place is
-washed in that plant's own flower.
+`film/digital-plant.mp4` is a reel of the same figures, a little over two
+minutes of it. The opening plate of the book draws itself, and then every one
+of the fifteen species is taken in turn: the name, the productions read onto
+the page a line at a time, the word it starts from and the plant that word
+draws, and then pass after pass until it flowers. The word is on one side
+throughout and the plant it draws is on the other. On each pass the letters a
+production is about to replace are washed in graphite, and what it writes in
+their place is washed in that plant's own flower.
+
+A long derivation takes each pass more quickly than a short one, so a grass
+that needs eighteen rewrites to put out a head does not run three times the
+length of a tree that is done in six.
 
 Every rewrite also sounds — a short droplet whose pitch climbs while it rings,
 walking up a pentatone as the derivation deepens, so a plant is heard growing
