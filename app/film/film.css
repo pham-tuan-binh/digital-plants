@@ -37,40 +37,6 @@ body {
   animation: none !important;
 }
 
-/* ------------------------------------------------------------- furniture -- */
-
-.film-mark,
-.film-tally {
-  position: absolute;
-  top: 54px;
-  font-size: 15px;
-  font-variant-caps: small-caps;
-  letter-spacing: 0.18em;
-  color: var(--faint);
-}
-.film-mark {
-  left: 88px;
-}
-.film-tally {
-  right: 88px;
-  font-variant-caps: normal;
-  font-style: italic;
-  letter-spacing: 0.04em;
-  font-size: 17px;
-}
-
-.film-foot {
-  position: absolute;
-  bottom: 46px;
-  left: 88px;
-  right: 88px;
-  display: flex;
-  justify-content: space-between;
-  font-size: 15px;
-  font-style: italic;
-  color: var(--faint);
-}
-
 /* ----------------------------------------------------------------- title -- */
 
 .shot-title {
@@ -84,8 +50,8 @@ body {
 }
 
 .title-plate {
-  width: 900px;
-  height: 640px;
+  width: 820px;
+  height: 560px;
 }
 
 .title-name {
@@ -94,27 +60,42 @@ body {
   line-height: 1.1;
 }
 
-.title-line {
-  margin: 0;
+/* The epigraph the book itself opens on, set the way it is set there. */
+.title-quote {
+  margin: 6px 0 0;
   font-size: 21px;
   font-style: italic;
+  line-height: 1.55;
   color: var(--faint);
   text-align: center;
-  max-width: 40rem;
+  text-wrap: balance;
+  max-width: 46rem;
+}
+
+.title-attrib {
+  display: block;
+  margin-top: 14px;
+  font-style: normal;
+  font-size: 14px;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.16em;
 }
 
 /* ----------------------------------------------------------------- flora -- */
 
+/* The frame is halved down the middle: the plant has the left half and the
+   word has the right. The plate is given the half whole, edge to edge, so
+   the figure stands on the centre line of its own half however long or short
+   the word beside it happens to run. */
 .shot-flora {
   position: absolute;
-  inset: 108px 88px 92px;
+  inset: 96px 96px 96px 0;
   display: grid;
-  grid-template-columns: 800px 1fr;
+  grid-template-columns: 960px 1fr;
   /* One row, exactly as tall as the frame allows. Left to `auto` the row
      grows to fit a word that has just doubled, and both columns spill off
      the bottom of the picture. */
   grid-template-rows: minmax(0, 1fr);
-  gap: 76px;
 }
 
 .flora-plate {
@@ -128,7 +109,7 @@ body {
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  padding-top: 8px;
+  padding: 8px 0 0 100px;
 }
 
 .flora-name {
@@ -146,11 +127,9 @@ body {
 
 /* The system, set the way the book sets it under a plate. */
 .flora-system {
-  margin: 26px 0 0;
-  padding-top: 18px;
-  border-top: 1px solid var(--hair);
-  font-size: 19px;
-  line-height: 1.62;
+  margin: 34px 0 0;
+  font-size: 18px;
+  line-height: 1.55;
   letter-spacing: 0.05em;
   font-style: italic;
   color: color-mix(in srgb, var(--ink) 66%, var(--paper));
@@ -171,25 +150,27 @@ body {
 
 /* The word itself. Fixed height, so a word that doubles does not shove the
    tally off the bottom of the frame. */
+/* Held to a fixed depth, and shorter than the plate beside it. The word is
+   the smaller half of the page; the plant is what the page is for. */
 .flora-word {
-  margin: 24px 0 0;
-  padding-top: 18px;
-  border-top: 1px solid var(--hair);
-  flex: 1 1 auto;
-  min-height: 0;
+  margin: 34px 0 0;
+  flex: 0 0 auto;
+  height: 236px;
   overflow: hidden;
   position: relative;
-  mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
+  /* Longer than the page holds is the point, not a fault: it runs off the
+     bottom and fades. */
+  mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
 }
 
 .flora-word .glyphs {
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.9;
 }
 
 .flora-count {
-  margin: 18px 0 0;
-  font-size: 17px;
+  margin: 20px 0 0;
+  font-size: 16px;
   font-style: italic;
   color: var(--faint);
 }
@@ -214,50 +195,27 @@ body {
     color-mix(in srgb, var(--accent, #c9808c) 55%, var(--ink));
 }
 
-/* ------------------------------------------------------------------- bed -- */
+/* ------------------------------------------------------------------ flip -- */
 
-.shot-bed {
+.shot-flip {
   position: absolute;
-  inset: 116px 88px 96px;
+  inset: 90px 0 78px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.bed-head {
-  margin: 0 0 4px;
-  font-size: 40px;
+/* A definite height, in pixels, and never a flexible one.
+   `.fig` sizes its canvas from the box it is in and then sets the canvas to
+   that size in CSS pixels; if the box in turn takes its height from its
+   content, the two chase each other, the plate is torn down and restarted on
+   every frame, and a heavy plate never finishes laying its flowers. */
+.flip-plate {
+  width: 900px;
+  height: 840px;
 }
 
-.bed-rubric {
-  margin: 0 0 18px;
-  font-size: 19px;
-  font-style: italic;
-  color: var(--faint);
-}
-
-.bed-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 316px);
-  gap: 4px 12px;
-  justify-content: center;
-}
-
-.bed-cell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.bed-fig {
-  width: 100%;
-  height: 216px;
-}
-
-.bed-name {
-  margin: 0;
-  font-size: 16px;
-  font-variant-caps: small-caps;
-  letter-spacing: 0.1em;
-  color: var(--faint);
+.flip-name {
+  margin: 22px 0 0;
+  font-size: 30px;
 }

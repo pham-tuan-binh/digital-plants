@@ -32,10 +32,16 @@ npx serve out
 ## The film
 
 `film/digital-plant.mp4` is a thirty-second reel of the same figures: the
-opening plant drawing itself, five species with the word on one side and the
-plant it draws on the other, and the whole flora at the end. On each pass the
-letters a production is about to replace are marked in graphite, and what it
-writes in their place is washed in that plant's own flower.
+opening plate of the book drawing itself, five species with the word on one
+side and the plant it draws on the other, and then the rest of the flora
+turned over one plate at a time. On each pass the letters a production is
+about to replace are marked in graphite, and what it writes in their place is
+washed in that plant's own flower.
+
+Every rewrite also sounds — a short droplet whose pitch climbs while it rings,
+walking up a pentatone as the derivation deepens, so a plant is heard growing
+rather than ticking. The track is arithmetic over a sample buffer in
+`scripts/film-sound.mjs`; there are no recordings and no audio library.
 
 It is not a screen recording. `/film` is a page like any other on the site —
 same face, same paper, same canvases — that draws whatever frame it is asked
@@ -77,6 +83,7 @@ there is nothing to configure: a repo named `digital-plants` is served from
 | `lib/flora.ts` | The plants, each with its axiom, rules, and turtle settings. |
 | `app/page.tsx` | The book, chapter by chapter. |
 | `app/film/` | The reel: the score, the derivation with its replacements marked, and the page the camera photographs. |
+| `scripts/` | The camera that walks the film frame by frame, and the synthesiser that gives every rewrite a sound. |
 
 The text quotes *The Algorithmic Beauty of Plants* by Przemysław
 Prusinkiewicz and Aristid Lindenmayer, which is [free to

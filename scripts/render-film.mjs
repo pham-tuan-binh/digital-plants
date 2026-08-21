@@ -18,7 +18,8 @@
 
 import { createRequire } from "node:module";
 import { spawn } from "node:child_process";
-import { mkdirSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { soundtrack } from "./film-sound.mjs";
 import { dirname, resolve } from "node:path";
 
 const require = createRequire(import.meta.url);
@@ -40,6 +41,8 @@ const height = Number(args.get("height") ?? 1080);
  * drawing for pixels it will not draw.
  */
 const density = Number(args.get("density") ?? 1.5);
+
+/* ----------------------------------------------------------------- tools -- */
 
 function findModule(name, extra = []) {
   const roots = [
@@ -85,11 +88,16 @@ await page.waitForFunction(() => Boolean(window.__film), null, {
   timeout: 60_000,
 });
 
-const { frames, fps } = await page.evaluate(() => ({
+const { frames, fps, cues } = await page.evaluate(() => ({
   frames: window.__film.frames,
   fps: window.__film.fps,
+  cues: window.__film.cues,
 }));
 console.log(`${frames} frames at ${fps}fps — ${(frames / fps).toFixed(1)}s`);
+
+const wav = `${out.replace(/\.[^.]+$/, "")}.wav`;
+writeFileSync(wav, soundtrack(cues, frames / fps));
+console.log(`${cues.length} sounds`);
 
 const encoder = spawn(
   ffmpeg,
@@ -99,11 +107,17 @@ const encoder = spawn(
     "-framerate", String(fps),
     "-c:v", "png",
     "-i", "-",
+    "-i", wav,
+    "-map", "0:v:0",
+    "-map", "1:a:0",
     "-vf", `scale=${width}:${height}:flags=lanczos`,
     "-c:v", "libx264",
     "-preset", "slow",
     "-crf", "18",
     "-pix_fmt", "yuv420p",
+    "-c:a", "aac",
+    "-b:a", "192k",
+    "-shortest",
     "-movflags", "+faststart",
     out,
   ],
@@ -125,8 +139,14 @@ const write = (buf) =>
 
 const clip = { x: 0, y: 0, width, height };
 const started = Date.now();
+const restless = [];
 for (let i = 0; i < frames; i++) {
-  await page.evaluate((n) => window.__film.seek(n), i);
+  // The page reports how many turns it took to stop drawing, or -1 if it
+  // never did. A frame that never stopped is a frame photographed half
+  // drawn, and it is worth being told rather than finding it in the film.
+  if ((await page.evaluate((n) => window.__film.seek(n), i)) < 0) {
+    restless.push(i);
+  }
   await write(await page.screenshot({ type: "png", clip }));
   if ((i + 1) % 30 === 0 || i + 1 === frames) {
     const per = (Date.now() - started) / (i + 1);
@@ -141,4 +161,10 @@ process.stdout.write("\n");
 encoder.stdin.end();
 await done;
 await browser.close();
+rmSync(wav, { force: true });
+if (restless.length > 0) {
+  console.warn(
+    `${restless.length} frames never stopped drawing: ${restless.slice(0, 12).join(", ")}`,
+  );
+}
 console.log(`wrote ${out}`);

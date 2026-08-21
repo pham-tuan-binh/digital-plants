@@ -7,9 +7,11 @@ import { pending } from "@/lib/schedule";
 import type { Pass } from "./derivation";
 import {
   BOUQUET,
+  CUES,
   FPS,
   FRAMES,
   HERO,
+  TITLED,
   beatAt,
   shotAt,
   type Movement,
@@ -33,23 +35,23 @@ function classOf(ch: string) {
  * `mark` says what each letter is: struck, meaning a production is about to
  * replace it, or fresh, meaning a production has just written it. Everything
  * else is set the way the book sets a derivation.
+ *
+ * A word too long for its well is not counted or cut off — it simply runs
+ * out of the bottom of the page and fades, which says "there is more of this
+ * than will fit" without putting another number on the screen.
  */
 function Word({
   text,
   mark,
-  limit = 1900,
 }: {
   text: string;
   mark: (i: number) => "" | " is-struck" | " is-fresh";
-  limit?: number;
 }) {
   const depths = useMemo(() => depthMap(text), [text]);
-  const clipped = text.length > limit;
-  const shown = clipped ? text.slice(0, limit) : text;
 
   return (
     <p className="glyphs">
-      {Array.from(shown, (ch, i) => (
+      {Array.from(text, (ch, i) => (
         <span
           key={i}
           className={`glyph ${classOf(ch)}${mark(i)}`}
@@ -58,12 +60,6 @@ function Word({
           {ch}
         </span>
       ))}
-      {clipped && (
-        <span className="glyph-more">
-          {" "}
-          + {(text.length - limit).toLocaleString()} more
-        </span>
-      )}
     </p>
   );
 }
@@ -84,12 +80,13 @@ function inSpans(spans: [number, number][], i: number): boolean {
 /* ---------------------------------------------------------------- shots -- */
 
 function Title({ local, length }: { local: number; length: number }) {
-  // The plant draws itself over the first two thirds of the shot and is then
-  // held; the titling comes up under it once there is something to title.
-  // A stroke or two is already down on the first frame, because a film whose
-  // opening frame is blank paper has a blank paper for a poster.
-  const grow = ease(clamp01((local + 3) / (length * 0.62)));
-  const lift = ease(clamp01((local - 22) / 26));
+  // The plant draws itself over the first half of the shot and is then held;
+  // the titling comes up under it once there is something to title. A stroke
+  // or two is already down on the first frame, because a film whose opening
+  // frame is blank paper has a blank paper for a poster.
+  const grow = ease(clamp01((local + 3) / (length * 0.5)));
+  const lift = ease(clamp01((local - TITLED + 14) / 26));
+  const said = ease(clamp01((local - TITLED - 8) / 26));
 
   return (
     <div className="shot-title">
@@ -105,8 +102,11 @@ function Title({ local, length }: { local: number; length: number }) {
       <p className="title-name" style={{ opacity: lift }}>
         Digital Plant
       </p>
-      <p className="title-line" style={{ opacity: lift }}>
-        Rewrite a string of symbols, hand it to a turtle, and a plant appears.
+      <p className="title-quote" style={{ opacity: said }}>
+        Organic form itself is found, mathematically speaking, to be a function
+        of time. We might call the form of an organism an event in space-time,
+        and not merely a configuration in space.
+        <span className="title-attrib">D&rsquo;Arcy Thompson</span>
       </p>
     </div>
   );
@@ -117,15 +117,14 @@ function Flora({ movement, local }: { movement: Movement; local: number }) {
   const { plant } = movement;
   const pass: Pass | null = beat.pass;
 
-  const mark = useMemo(() => {
-    if (!pass) return () => "" as const;
-    if (beat.striking) {
-      const struck = pass.replaced;
-      return (i: number) => (struck.has(i) ? (" is-struck" as const) : ("" as const));
-    }
-    const spans = pass.written;
-    return (i: number) => (inSpans(spans, i) ? (" is-fresh" as const) : ("" as const));
-  }, [pass, beat.striking]);
+  // Struck while the pass is being announced, fresh once it has been made.
+  const mark = !pass
+    ? () => "" as const
+    : beat.striking
+      ? (i: number) =>
+          pass.replaced.has(i) ? (" is-struck" as const) : ("" as const)
+      : (i: number) =>
+          inSpans(pass.written, i) ? (" is-fresh" as const) : ("" as const);
 
   const accent = plant.flower?.outer ?? "#8a8577";
 
@@ -178,60 +177,47 @@ function Flora({ movement, local }: { movement: Movement; local: number }) {
 
         <p className="flora-count">
           n = {beat.n} &middot; {beat.rung.word.length.toLocaleString()}{" "}
-          {beat.rung.word.length === 1 ? "symbol" : "symbols"} &middot;{" "}
-          {beat.reveal.toLocaleString()}{" "}
-          {beat.reveal === 1 ? "stroke" : "strokes"}
+          {beat.rung.word.length === 1 ? "symbol" : "symbols"}
         </p>
       </div>
     </div>
   );
 }
 
-function Bed({ local }: { local: number }) {
-  const lift = ease(clamp01(local / 18));
+/**
+ * The rest of the flora, one plate at a time.
+ *
+ * Each is already grown when it appears — no drawing-in, no cross-fade. A
+ * plate is turned over, held, and turned again.
+ */
+function Flip({ local, each }: { local: number; each: number }) {
+  const i = Math.max(0, Math.min(BOUQUET.length - 1, Math.floor(local / each)));
+  const { plant, drawing, seed } = BOUQUET[i];
+
   return (
-    <div className="shot-bed" style={{ opacity: lift }}>
-      <p className="bed-head">A Vietnamese flora</p>
-      <p className="bed-rubric">
-        Fifteen plants, and a different production behind every one.
-      </p>
-      <div className="bed-grid">
-        {BOUQUET.map(({ plant, drawing, seed }, i) => {
-          // They come up left to right, a few frames apart.
-          const t = ease(clamp01((local - 6 - i * 3) / 22));
-          return (
-            <div className="bed-cell" key={plant.id}>
-              <div className="bed-fig">
-                <PlantCanvas
-                  drawing={drawing}
-                  reveal={Math.round(t * drawing.segments.length)}
-                  roughness={1.1}
-                  merge
-                  anchor="bottom"
-                  seed={seed}
-                  weight={0.95}
-                  flower={plant.flower}
-                  petals={plant.petals}
-                  heartScale={plant.heartScale}
-                  rings={plant.rings}
-                  stemColour={plant.stemColour}
-                  title={plant.name}
-                />
-              </div>
-              <p className="bed-name" style={{ opacity: t }}>
-                {plant.name}
-              </p>
-            </div>
-          );
-        })}
+    <div className="shot-flip">
+      <div className="flip-plate">
+        <PlantCanvas
+          drawing={drawing}
+          reveal={drawing.segments.length}
+          roughness={1.1}
+          merge
+          anchor="bottom"
+          seed={seed}
+          flower={plant.flower}
+          petals={plant.petals}
+          heartScale={plant.heartScale}
+          rings={plant.rings}
+          stemColour={plant.stemColour}
+          title={plant.name}
+        />
       </div>
+      <p className="flip-name">{plant.name}</p>
     </div>
   );
 }
 
 /* ----------------------------------------------------------------- film -- */
-
-const ROMAN = ["i", "ii", "iii", "iv", "v"];
 
 const ease = (t: number) => t * t * (3 - 2 * t);
 const clamp01 = (t: number) => Math.max(0, Math.min(1, t));
@@ -245,16 +231,20 @@ const raf = () =>
  * Plates paint themselves a slice of a frame at a time out of one shared
  * queue, so the frame after a cut is not the frame the plate finishes on.
  * The camera waits for the queue to run dry twice over before it fires.
+ *
+ * Returns how many turns that took, or -1 if the drawing never stopped. The
+ * camera is told rather than left to photograph a half-drawn plate.
  */
-async function settle() {
+async function settle(): Promise<number> {
   for (let i = 0; i < 3; i++) await raf();
-  for (let guard = 0; guard < 1200; guard++) {
+  for (let guard = 0; guard < 2000; guard++) {
     if (pending() === 0) {
       await raf();
-      if (pending() === 0) return;
+      if (pending() === 0) return guard;
     }
     await raf();
   }
+  return -1;
 }
 
 export default function Film() {
@@ -278,12 +268,13 @@ export default function Film() {
     w.__film = {
       frames: FRAMES,
       fps: FPS,
+      /** When each rewrite sounds, and what it sounds like. */
+      cues: CUES,
       /** Put frame `i` on the screen, and resolve once it is fully drawn. */
       seek: async (i: number) => {
         captured.current = true;
         setFrame(i);
-        await settle();
-        return i;
+        return settle();
       },
     };
     return () => {
@@ -314,24 +305,13 @@ export default function Film() {
   return (
     <div className="film-fit" style={{ ["--film-scale" as string]: scale }}>
       <div className="film-stage">
-        <p className="film-mark">Digital Plant</p>
-        {shot.kind === "flora" && (
-          <p className="film-tally">{ROMAN[shot.index]} of v</p>
-        )}
         {shot.kind === "title" ? (
           <Title local={local} length={shot.length} />
         ) : shot.kind === "flora" ? (
           <Flora movement={shot.movement} local={local} />
         ) : (
-          <Bed local={local} />
+          <Flip local={local} each={shot.each} />
         )}
-        <div className="film-foot">
-          <span>l-systems.binhph.am</span>
-          <span>
-            after Prusinkiewicz &amp; Lindenmayer, The Algorithmic Beauty of
-            Plants
-          </span>
-        </div>
       </div>
     </div>
   );

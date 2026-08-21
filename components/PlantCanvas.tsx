@@ -367,12 +367,16 @@ export default function PlantCanvas({
       if (o.kind === "leaf") seen += 1;
       if (i < laid.current.organs) continue;
       if (o.srcIndex > lastSrc) break;
-      laid.current.organs = i + 1;
 
+      // Give up before claiming the organ, never after. Marking it laid and
+      // then running out of time lost it for good: the next slice skipped it
+      // as already drawn, and a crowded plate came up as a bare tree with
+      // every one of its flowers missing.
       if (performance.now() >= deadline) {
         ranOut = true;
         break;
       }
+      laid.current.organs = i + 1;
 
       const lit = active === o.srcIndex;
       if (o.kind === "leaf") {
