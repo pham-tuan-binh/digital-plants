@@ -1,0 +1,40 @@
+/* ==========================================================================
+   The gallery
+   A herbarium sheet: fifteen plates on one page, five across and three down,
+   each named underneath. The stage it sits on is in ../film/stage.css.
+   ========================================================================== */
+
+.shot-gallery {
+  position: absolute;
+  inset: 34px 56px 30px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 10px 12px;
+}
+
+.gal-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+/* A definite height, in pixels, and never a flexible one. `.fig` sizes its
+   canvas from the box it is in and then sets the canvas to that size in CSS
+   pixels; if the box in turn took its height from its content, the two would
+   chase each other and the plate would never finish. */
+.gal-fig {
+  width: 100%;
+  height: 288px;
+}
+
+.gal-name {
+  margin: 0;
+  height: 44px;
+  line-height: 44px;
+  font-size: 17px;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.11em;
+  color: var(--faint);
+}

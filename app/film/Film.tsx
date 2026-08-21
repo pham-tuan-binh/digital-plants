@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 import PlantCanvas from "@/components/PlantCanvas";
 import { depthMap } from "@/lib/lsystem";
-import { pending } from "@/lib/schedule";
 import type { Pass } from "./derivation";
 import {
   CUES,
@@ -17,6 +16,7 @@ import {
   shotAt,
   type Shot,
 } from "./score";
+import { useCamera } from "./camera";
 import "./film.css";
 
 /* --------------------------------------------------------------- glyphs -- */
@@ -197,84 +197,8 @@ function Flora({ shot, local }: { shot: Extract<Shot, { kind: "flora" }>; local:
 const ease = (t: number) => t * t * (3 - 2 * t);
 const clamp01 = (t: number) => Math.max(0, Math.min(1, t));
 
-const raf = () =>
-  new Promise<void>((r) => requestAnimationFrame(() => r()));
-
-/**
- * Wait until nothing on the page has any drawing left to do.
- *
- * Plates paint themselves a slice of a frame at a time out of one shared
- * queue, so the frame after a cut is not the frame the plate finishes on.
- * The camera waits for the queue to run dry twice over before it fires.
- *
- * Returns how many turns that took, or -1 if the drawing never stopped. The
- * camera is told rather than left to photograph a half-drawn plate.
- */
-async function settle(): Promise<number> {
-  for (let i = 0; i < 3; i++) await raf();
-  for (let guard = 0; guard < 2000; guard++) {
-    if (pending() === 0) {
-      await raf();
-      if (pending() === 0) return guard;
-    }
-    await raf();
-  }
-  return -1;
-}
-
 export default function Film() {
-  const [frame, setFrame] = useState(0);
-  const [scale, setScale] = useState(1);
-  // A visitor gets the film played to them; the camera takes it over.
-  const captured = useRef(false);
-
-  useEffect(() => {
-    const fit = () =>
-      setScale(
-        Math.min(window.innerWidth / 1920, window.innerHeight / 1080),
-      );
-    fit();
-    window.addEventListener("resize", fit);
-    return () => window.removeEventListener("resize", fit);
-  }, []);
-
-  useEffect(() => {
-    const w = window as unknown as { __film?: unknown };
-    w.__film = {
-      frames: FRAMES,
-      fps: FPS,
-      /** When each rewrite sounds, and what it sounds like. */
-      cues: CUES,
-      /** Put frame `i` on the screen, and resolve once it is fully drawn. */
-      seek: async (i: number) => {
-        captured.current = true;
-        setFrame(i);
-        return settle();
-      },
-    };
-    return () => {
-      delete w.__film;
-    };
-  }, []);
-
-  useEffect(() => {
-    let live = true;
-    let id = 0;
-    const start = performance.now();
-    const tick = (now: number) => {
-      if (!live) return;
-      if (!captured.current) {
-        setFrame(Math.floor(((now - start) / 1000) * FPS) % FRAMES);
-      }
-      id = requestAnimationFrame(tick);
-    };
-    id = requestAnimationFrame(tick);
-    return () => {
-      live = false;
-      cancelAnimationFrame(id);
-    };
-  }, []);
-
+  const { frame, scale } = useCamera(FRAMES, FPS, CUES);
   const { shot, local } = shotAt(frame);
 
   return (

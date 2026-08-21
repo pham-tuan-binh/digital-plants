@@ -1,0 +1,39 @@
+/* ==========================================================================
+   The stage
+   Sixteen by nine of the book's own paper, held to one frame and fitted to
+   whatever is looking at it. Nothing on it transitions or animates on a
+   clock: every value is a function of the frame number, so a frame can be
+   photographed at whatever speed the machine manages and the film still runs
+   at thirty.
+   ========================================================================== */
+
+html,
+body {
+  overflow: hidden;
+}
+
+.film-fit {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--paper);
+}
+
+.film-stage {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  flex: none;
+  transform: scale(var(--film-scale, 1));
+  transform-origin: center;
+}
+
+/* A frame is a still. Anything that eased on its own would be caught
+   half-way through by the camera. */
+.film-stage *,
+.film-stage *::before,
+.film-stage *::after {
+  transition: none !important;
+  animation: none !important;
+}

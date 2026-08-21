@@ -67,7 +67,19 @@ itself wants:
 npm i -D playwright ffmpeg-static && npx playwright install chromium
 ```
 
-Visiting `/film` in a browser just plays it.
+`film/digital-flora.mp4` is a second, shorter one: the whole flora on a single
+sheet, five across and three down, all fifteen drawing themselves at once and
+each named as it finishes. How long a plant takes is mostly how much of it
+there is, so a tuft of grass is over almost before it starts while an apricot
+is still filling in after everything around it has stopped — which is the
+truer thing to watch anyway. It comes off `/gallery` by the same camera:
+
+```bash
+node scripts/render-film.mjs --url http://localhost:3000/gallery/ \
+  --out film/digital-flora.mp4
+```
+
+Visiting `/film` or `/gallery` in a browser just plays them.
 
 ## Deploy it
 
@@ -88,7 +100,8 @@ there is nothing to configure: a repo named `digital-plants` is served from
 | `lib/schedule.ts` | One frame budget shared by every figure, so painting never blocks the scroll. |
 | `lib/flora.ts` | The plants, each with its axiom, rules, and turtle settings. |
 | `app/page.tsx` | The book, chapter by chapter. |
-| `app/film/` | The reel: the score, the derivation with its replacements marked, and the page the camera photographs. |
+| `app/film/` | The reel: the score, the derivation with its replacements marked, the stage, and the camera both films are photographed through. |
+| `app/gallery/` | The second reel: every species on one sheet, growing at once. |
 | `scripts/` | The camera that walks the film frame by frame, and the synthesiser that gives every rewrite a sound. |
 
 The text quotes *The Algorithmic Beauty of Plants* by Przemysław
