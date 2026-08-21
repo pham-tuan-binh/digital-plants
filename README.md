@@ -29,6 +29,34 @@ behind them. To preview that build the way GitHub Pages serves it:
 npx serve out
 ```
 
+## The film
+
+`film/digital-plant.mp4` is a thirty-second reel of the same figures: the
+opening plant drawing itself, five species with the word on one side and the
+plant it draws on the other, and the whole flora at the end. On each pass the
+letters a production is about to replace are marked in graphite, and what it
+writes in their place is washed in that plant's own flower.
+
+It is not a screen recording. `/film` is a page like any other on the site —
+same face, same paper, same canvases — that draws whatever frame it is asked
+for and says when it has finished drawing it. The camera walks the frames one
+at a time, so nothing is ever photographed half-drawn and two runs come out
+identical:
+
+```bash
+npm run build && npx serve out          # or npm run dev
+node scripts/render-film.mjs --url http://localhost:3000/film/
+```
+
+That needs Playwright and an ffmpeg with libx264, neither of which the site
+itself wants:
+
+```bash
+npm i -D playwright ffmpeg-static && npx playwright install chromium
+```
+
+Visiting `/film` in a browser just plays it.
+
 ## Deploy it
 
 Pushing to `main` builds and publishes to GitHub Pages via
@@ -48,6 +76,7 @@ there is nothing to configure: a repo named `digital-plants` is served from
 | `lib/schedule.ts` | One frame budget shared by every figure, so painting never blocks the scroll. |
 | `lib/flora.ts` | The plants, each with its axiom, rules, and turtle settings. |
 | `app/page.tsx` | The book, chapter by chapter. |
+| `app/film/` | The reel: the score, the derivation with its replacements marked, and the page the camera photographs. |
 
 The text quotes *The Algorithmic Beauty of Plants* by Przemysław
 Prusinkiewicz and Aristid Lindenmayer, which is [free to

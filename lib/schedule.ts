@@ -55,3 +55,14 @@ export function enqueue(job: PaintJob) {
 export function dequeue(job: PaintJob) {
   queue.delete(job);
 }
+
+/**
+ * How many plates still have drawing left to do.
+ *
+ * Nothing on the page asks this. The film capture does: it advances a frame,
+ * waits for the queue to run dry, and only then takes the picture, so that no
+ * frame is ever photographed half-drawn.
+ */
+export function pending(): number {
+  return queue.size;
+}

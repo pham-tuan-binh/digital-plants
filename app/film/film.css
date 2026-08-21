@@ -1,0 +1,263 @@
+/* ==========================================================================
+   The film
+   The book's own paper, ink and face, cut to sixteen by nine and held to one
+   frame. Nothing here transitions or animates on a clock: every value on the
+   page is a function of the frame number, so a frame can be photographed at
+   whatever speed the machine manages and the film still runs at thirty.
+   ========================================================================== */
+
+html,
+body {
+  overflow: hidden;
+}
+
+.film-fit {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--paper);
+}
+
+.film-stage {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  flex: none;
+  transform: scale(var(--film-scale, 1));
+  transform-origin: center;
+}
+
+/* A frame is a still. Anything that eases on its own would be caught
+   half-way through by the camera. */
+.film-stage *,
+.film-stage *::before,
+.film-stage *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* ------------------------------------------------------------- furniture -- */
+
+.film-mark,
+.film-tally {
+  position: absolute;
+  top: 54px;
+  font-size: 15px;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.18em;
+  color: var(--faint);
+}
+.film-mark {
+  left: 88px;
+}
+.film-tally {
+  right: 88px;
+  font-variant-caps: normal;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  font-size: 17px;
+}
+
+.film-foot {
+  position: absolute;
+  bottom: 46px;
+  left: 88px;
+  right: 88px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--faint);
+}
+
+/* ----------------------------------------------------------------- title -- */
+
+.shot-title {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.title-plate {
+  width: 900px;
+  height: 640px;
+}
+
+.title-name {
+  margin: 0;
+  font-size: 52px;
+  line-height: 1.1;
+}
+
+.title-line {
+  margin: 0;
+  font-size: 21px;
+  font-style: italic;
+  color: var(--faint);
+  text-align: center;
+  max-width: 40rem;
+}
+
+/* ----------------------------------------------------------------- flora -- */
+
+.shot-flora {
+  position: absolute;
+  inset: 108px 88px 92px;
+  display: grid;
+  grid-template-columns: 800px 1fr;
+  /* One row, exactly as tall as the frame allows. Left to `auto` the row
+     grows to fit a word that has just doubled, and both columns spill off
+     the bottom of the picture. */
+  grid-template-rows: minmax(0, 1fr);
+  gap: 76px;
+}
+
+.flora-plate {
+  position: relative;
+  min-height: 0;
+  height: 100%;
+}
+
+.flora-side {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding-top: 8px;
+}
+
+.flora-name {
+  margin: 0;
+  font-size: 46px;
+  line-height: 1.05;
+}
+
+.flora-latin {
+  margin: 8px 0 0;
+  font-size: 20px;
+  font-style: italic;
+  color: var(--faint);
+}
+
+/* The system, set the way the book sets it under a plate. */
+.flora-system {
+  margin: 26px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--hair);
+  font-size: 19px;
+  line-height: 1.62;
+  letter-spacing: 0.05em;
+  font-style: italic;
+  color: color-mix(in srgb, var(--ink) 66%, var(--paper));
+  white-space: pre-wrap;
+}
+
+/* The three things a system is: the axiom, the productions, the angle. Set
+   in the margin the way the book sets them, and never in small caps — that
+   turns δ into a capital delta, which is a different thing entirely. */
+.flora-system b {
+  display: inline-block;
+  width: 1.6em;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0;
+  color: var(--faint);
+}
+
+/* The word itself. Fixed height, so a word that doubles does not shove the
+   tally off the bottom of the frame. */
+.flora-word {
+  margin: 24px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--hair);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
+}
+
+.flora-word .glyphs {
+  font-size: 17px;
+  line-height: 1.9;
+}
+
+.flora-count {
+  margin: 18px 0 0;
+  font-size: 17px;
+  font-style: italic;
+  color: var(--faint);
+}
+
+/* ------------------------------------------------------------ highlights -- */
+
+/* About to go: the letters this pass will strike out. */
+.glyph.is-struck {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 15%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 15%, transparent);
+}
+
+/* Just written: what the productions put in their place, washed in the
+   plant's own flower. Cream flowers wash to almost nothing on cream paper,
+   so the rule under the letters is struck in a darkened version of the same
+   pigment and every species reads at the same strength. */
+.glyph.is-fresh {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--accent, #c9808c) 46%, transparent);
+  box-shadow: inset 0 -2px 0
+    color-mix(in srgb, var(--accent, #c9808c) 55%, var(--ink));
+}
+
+/* ------------------------------------------------------------------- bed -- */
+
+.shot-bed {
+  position: absolute;
+  inset: 116px 88px 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bed-head {
+  margin: 0 0 4px;
+  font-size: 40px;
+}
+
+.bed-rubric {
+  margin: 0 0 18px;
+  font-size: 19px;
+  font-style: italic;
+  color: var(--faint);
+}
+
+.bed-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 316px);
+  gap: 4px 12px;
+  justify-content: center;
+}
+
+.bed-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bed-fig {
+  width: 100%;
+  height: 216px;
+}
+
+.bed-name {
+  margin: 0;
+  font-size: 16px;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.1em;
+  color: var(--faint);
+}
